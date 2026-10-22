@@ -20,10 +20,10 @@ python run_all.py             # all 25 scenarios -> results/summary.md + per-sce
 python -m unittest -v         # regression tests
 ```
 
-Other commands: `--list`, `--only baseline gps_step_jump`, `--runs 20` (Monte-Carlo with different noise seeds),
+Other commands: `--list`, `--only baseline gps_step_jump`, `--runs 20` ,
 `--no-plots`, `--custom my_case.json`.
 
-Per scenario you get `results/<name>/`: `plot.png` (true vs believed path, altitude, estimation error,
+Per scenario we get `results/<name>/`: `plot.png` (true vs believed path, altitude, estimation error,
 battery or separation), `log_drone*.csv` (10 Hz truth/estimate/sensor log), `events.csv` (timeline of faults,
 failsafes, avoidance), `metrics.json`.
 
