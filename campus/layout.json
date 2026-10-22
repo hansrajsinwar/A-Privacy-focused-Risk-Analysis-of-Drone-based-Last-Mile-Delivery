@@ -1,0 +1,90 @@
+{
+  "map": "kent_map.pdf",
+  "width_m": 1170.0,
+  "height_m": 843.2992641046607,
+  "alt_m": 30.0,
+  "speed_m_s": 8.0,
+  "fence_hor_m": 900,
+  "fence_ver_m": 70.0,
+  "timeout_s": 420,
+  "world": "kent_campus",
+  "drones": [
+    {
+      "id": 0,
+      "spawn": [
+        365.0,
+        -233.6
+      ],
+      "waypoints": [
+        [
+          306.5,
+          9.3
+        ],
+        [
+          432.9,
+          129.9
+        ]
+      ],
+      "waypoint_names": [
+        "library",
+        "cornwallis"
+      ]
+    },
+    {
+      "id": 1,
+      "spawn": [
+        105.3,
+        -323.0
+      ],
+      "waypoints": [
+        [
+          64.4,
+          -48.9
+        ],
+        [
+          303.0,
+          -143.4
+        ],
+        [
+          445.8,
+          -31.2
+        ]
+      ],
+      "waypoint_names": [
+        "sports_centre",
+        "eliot_college",
+        "rutherford"
+      ]
+    }
+  ],
+  "landmarks": {
+    "library": [
+      306.5,
+      9.3
+    ],
+    "keynes_college": [
+      69.0,
+      -215.0
+    ],
+    "sports_centre": [
+      64.4,
+      -48.9
+    ],
+    "rutherford": [
+      445.8,
+      -31.2
+    ],
+    "eliot_college": [
+      303.0,
+      -143.4
+    ],
+    "cornwallis": [
+      432.9,
+      129.9
+    ],
+    "west_pitches": [
+      -414.2,
+      125.7
+    ]
+  }
+}
