@@ -1,4 +1,4 @@
-# Drone fault / false-data simulation
+# Drone simulation
 
 Two ways to test how a drone behaves when its data is wrong:
 
