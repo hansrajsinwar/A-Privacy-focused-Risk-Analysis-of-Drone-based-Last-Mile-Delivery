@@ -94,7 +94,7 @@ Outcomes: `PASS` (mission done, landed at home) - `SAFE_ABORT` (landed safely, m
 - Command latency of 1 s makes the control loop unstable (drone never completes).
 
 Known simplifications: point-mass drone (no attitude dynamics), 2-state filter per axis, flat Earth, no motor model.
-It tells us *how the logic behaves*, not how your specific airframe flies.
+It tells us *how the logic behaves*, not how our specific airframe flies.
 
 ## B. PX4 SITL + Gazebo
 
