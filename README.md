@@ -149,7 +149,7 @@ Things to check / tune
   corner coordinates from OpenStreetMap (Share > Image) or a known distance, e.g. `--width-m 1250`.
 - **Alignment.** The ground picture and the 3D buildings must line up. If they do not, rerun with `--flip-y` (or `--flip-x`).
 - **Building height** is a guess (OSM export has none): `--height 14`. Flights are at 30 m (`--alt`).
-- **Your own map.** `python make_campus_world.py --map mymap.png --width-m <metres> --lat <lat> --lon <lon> --name mycampus`,
+- **Our own map.** `python make_campus_world.py --map mymap.png --width-m <metres> --lat <lat> --lon <lon> --name mycampus`,
   then edit `LANDMARKS`, `SPAWNS` and `MISSIONS` at the top of the script. The map must be top-down and north-up, and
   OSM standard style (buildings #d9d0c9) for the automatic buildings.
 - `campus/preview.png` shows the detected buildings (red), spawn points (dots) and the planned flights.
