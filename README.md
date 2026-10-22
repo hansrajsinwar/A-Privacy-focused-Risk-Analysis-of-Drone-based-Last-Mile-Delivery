@@ -42,7 +42,7 @@ thing you are measuring (`est_err` in the logs).
 | `gps_dropout` | - | no GPS fixes |
 | `gps_bias_step` | `offset:[x,y,z]` | sudden position jump |
 | `gps_drift` | `rate:[x,y,z]` m/s, `spoof_velocity` | spoofing walk-off; `true` = velocity spoofed consistently (hard to detect) |
-| `gps_feed` | `file`, `spoof_velocity` | offsets read from a CSV `t,dx,dy,dz` (your own false data) |
+| `gps_feed` | `file`, `spoof_velocity` | offsets read from a CSV `t,dx,dy,dz` (our own false data) |
 | `gps_freeze` | - | replay of a stale fix |
 | `gps_noise` | `scale` | multiply GPS noise (jamming-like) |
 | `baro_stuck` / `baro_bias` | - / `offset` | barometer frozen / offset |
