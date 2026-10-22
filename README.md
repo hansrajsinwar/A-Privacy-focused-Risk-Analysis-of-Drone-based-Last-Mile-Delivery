@@ -55,7 +55,7 @@ thing you are measuring (`est_err` in the logs).
 
 All faults take `t_start`, optional `t_end`, and `drone`.
 
-### Add your own scenario
+### Adding our own scenario
 
 In `scenarios.py` append to `_LIST`:
 
@@ -72,12 +72,12 @@ or a JSON file (`python run_all.py --custom my_case.json`):
             {"type": "gps_dropout", "t_start": 30, "t_end": 50}]}
 ```
 
-### Your own false-data feed
+### Our own false-data feed
 
 Make a CSV `t,dx,dy,dz` (seconds since fault start, metre offsets), save in `feeds/`, and use
 `Fault("gps_feed", 20, params={"file": "mine.csv", "spoof_velocity": True})`. Edit `make_feeds.py` to generate shapes in code.
 
-### Testing your own failsafe logic
+### Testing our own failsafe logic
 
 Thresholds live in `Params` (`sim.py`): GPS reject/timeout times, spoof-detector window/threshold, battery limits,
 avoidance distances. The logic itself is `Autopilot` - change it, re-run `python run_all.py`, compare `results/summary.md`.
@@ -89,7 +89,7 @@ Outcomes: `PASS` (mission done, landed at home) - `SAFE_ABORT` (landed safely, m
 - Short GPS loss is tolerated; long GPS loss lands in place within ~1 s of detection.
 - Step jumps and noisy/frozen GPS are caught by the innovation gate or the spoof detector.
 - A slow walk-off is caught only if velocity is *not* spoofed; a **consistent** spoof (position + velocity) passes every check,
-  and the drone lands ~14 m away believing it is home. Good place to add your own detection (e.g. IMU-vs-GPS velocity check).
+  and the drone lands ~14 m away believing it is home. Good place to add our own detection (e.g. IMU-vs-GPS velocity check).
 - False battery data causes either a needless landing or a crash; V2V replay/jamming causes collisions; a fake neighbour freezes a drone forever.
 - Command latency of 1 s makes the control loop unstable (drone never completes).
 
@@ -128,7 +128,7 @@ px4_setup.sh  px4_launch_sims.sh  px4_run_scenario.py  px4_gps_spoofer.py  px4_a
 feeds/   false-data CSVs          results/   simulator output
 ```
 
-## C. Your campus map in Gazebo (University of Kent example)
+## C. Campus map in Gazebo (University of Kent)
 
 `campus/make_campus_world.py` turns a top-down OpenStreetMap export (PDF or PNG) into a Gazebo world:
 the map becomes the ground, the building outlines found in the map are extruded into 3D blocks, and the
