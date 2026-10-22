@@ -118,7 +118,6 @@ python px4_analyze.py px4_results/gps_off [--ulog path/to/log.ulg]
 - PX4 drone paths are in `px4_run_scenario.py` (`LAYOUTS`); the two-drone layout crosses at the same point/time like in the simulator.
   PX4 has no V2V avoidance, so the metric is minimum separation.
 - Port assumptions: instance *i* -> MAVSDK on UDP `14540+i`, spoofer to `14580+i`. If your PX4 version differs, change `connect()` and the spoofer port.
-- `MissionItem(...)` argument lists change between MAVSDK versions; if you get a `TypeError`, compare with the mission example in your installed MAVSDK-Python.
 
 ## Files
 
