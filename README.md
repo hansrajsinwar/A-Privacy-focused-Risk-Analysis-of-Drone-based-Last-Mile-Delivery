@@ -33,7 +33,7 @@ Drone physics (truth, with lag, drag, wind, gusts, battery, crash detection) -> 
 baro, battery) -> **fault layer** -> Kalman filter with innovation gating -> autopilot (takeoff, waypoints, RTL,
 land, geofence, battery failsafes, GPS-lost failsafe, GPS-spoof detector, V2V yielding). The autopilot only sees
 the *estimate*, so false data makes the true drone behave differently from what the autopilot believes - that gap is the
-thing you are measuring (`est_err` in the logs).
+thing we are measuring (`est_err` in the logs).
 
 ### Fault types
 
