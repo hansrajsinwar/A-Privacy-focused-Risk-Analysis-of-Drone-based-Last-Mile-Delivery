@@ -139,7 +139,7 @@ source .venv/bin/activate
 pip install opencv-python-headless pillow         # once
 cd campus && python make_campus_world.py && cd ..
 deactivate
-export PX4_GZ_WORLD=kent_campus                   # in the SAME window you launch from
+export PX4_GZ_WORLD=kent_campus                   # in the SAME window we launch from
 ./px4_launch_sims.sh 2                            # window 1 (no .venv)
 python px4_run_scenario.py baseline --layout campus      # window 2 (with .venv)
 ```
