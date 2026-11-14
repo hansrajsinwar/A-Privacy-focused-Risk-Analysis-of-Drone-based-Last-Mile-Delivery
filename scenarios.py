@@ -1,12 +1,11 @@
 """
-scenarios.py - the test matrix. Add your own at the bottom (or load a JSON file with --custom).
 
 Geometry
   single drone : home (0,0). Flies a 30 m square, returns home, lands. Cruise 10 m, 4 m/s.
   two drones   : crossing paths at (15,15) at the SAME altitude and SAME time, so without
                  working V2V avoidance they collide. Drone 1 yields to drone 0.
 
-Fault types (see README for the parameters of each)
+Fault types 
   GPS      : gps_dropout, gps_bias_step, gps_drift, gps_feed, gps_freeze, gps_noise
   Baro     : baro_stuck, baro_bias
   IMU      : imu_bias
