@@ -76,7 +76,7 @@ SCENARIOS = {
     "gps_spoof_walk": [{"t": 20, "do": "spoof", "feed": "feeds/px4_ghost_walk.csv"}],
     "gps_spoof_walk_stop": [{"t": 20, "do": "spoof", "feed": "feeds/px4_ghost_walk.csv"},
                             {"t": 40, "do": "unspoof"}],
-    # link degradation on loopback (needs sudo; remove afterwards: sudo tc qdisc del dev lo root)
+   
     "link_delay_500ms": [{"t": 20, "do": "shell", "cmd": "sudo tc qdisc add dev lo root netem delay 500ms"},
                          {"t": 40, "do": "shell", "cmd": "sudo tc qdisc del dev lo root"}],
 }
