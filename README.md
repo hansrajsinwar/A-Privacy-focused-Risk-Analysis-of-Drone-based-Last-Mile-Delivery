@@ -10,7 +10,7 @@ It has three parts, from fastest to most realistic:
 | Part | What it is | Runs on | Status |
 |---|---|---|---|
 | **A. Python simulator** (`sim.py`) | Simple drone, sensors, Kalman filter and autopilot written for this project; 25 fault scenarios | Any computer with Python | **Tested.** 12 unit tests pass; all 25 scenarios run; results below |
-| **B. PX4 + Gazebo** (`px4_*`) | The real PX4 flight software flying two x500 drones in Gazebo Harmonic | Windows with WSL2, Ubuntu 22.04 | **Set up and running.** Both drones spawn in the campus world; the fault runs have not yet been recorded (see *Not yet done*) |
+| **B. PX4 + Gazebo** (`px4_*`) | The real PX4 flight software flying two x500 drones in Gazebo Harmonic | Windows with WSL2, Ubuntu 22.04 | **Set up and running.** |
 | **C. Kent campus world** (`campus/`) | The University of Kent OpenStreetMap export turned into a Gazebo world with 141 extruded buildings | Same as B | **Built and loads in Gazebo.** Buildings appear; ground map picture does not yet show (see *Known issues*) |
 
 ## Environment used
