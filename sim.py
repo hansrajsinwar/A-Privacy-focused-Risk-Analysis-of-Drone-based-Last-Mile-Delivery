@@ -303,9 +303,7 @@ class Estimator:
         return {"rejected": not ok, "nis": nis}
 
 
-# ----------------------------------------------------------------------------
-# Autopilot: mission logic + failsafes (this is the "system under test")
-# ----------------------------------------------------------------------------
+
 ACTIVE_MODES = ("TAKEOFF", "MISSION", "RTL", "LAND")
 
 
