@@ -242,5 +242,4 @@ the top), rebuild, and check `campus/preview.png`.
 | World | University of Kent campus (`kent_campus`), 2 drones, 30 m altitude |
 | Repeats | 5 to 7 per scenario |
 | Date of Python results above | 2026-11 (25 scenarios x 5 runs, seed 1) |
-| Researcher | _your name_ |
-| Hypothesis | _write your own, for example: a consistent GPS spoof is not detected_ |
+| Researcher | Hansraj Sinwar |
