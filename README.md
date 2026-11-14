@@ -7,7 +7,7 @@ Two ways to test how a drone behaves when its data is wrong:
 | Runs | anywhere with Python, ~1 s per scenario | Ubuntu 22.04/24.04, needs a GPU-ish desktop |
 | Autopilot | a simple one included (we can edit it) | the real PX4 flight stack |
 | False data | any sensor, any shape, via CSV feeds | PX4 failure injection + GPS_INPUT spoofer |
-| Status | **tested** (12 unit tests pass, 25 scenarios run) | **Implemented and tested successfully ** - minor configuration adjustments completed |
+| Status | **tested** (12 unit tests pass, 25 scenarios run) | **Implemented and tested successfully** - minor configuration adjustments completed |
 
 Start with A to design scenarios and metrics, then repeat the interesting ones in B.
 
