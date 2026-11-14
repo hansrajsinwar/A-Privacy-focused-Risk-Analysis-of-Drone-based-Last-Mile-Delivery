@@ -11,7 +11,7 @@ It has three parts, from fastest to most realistic:
 |---|---|---|---|
 | **A. Python simulator** (`sim.py`) | Simple drone, sensors, Kalman filter and autopilot written for this project; 25 fault scenarios | Any computer with Python | **Tested.** 12 unit tests pass; all 25 scenarios run; results below |
 | **B. PX4 + Gazebo** (`px4_*`) | The real PX4 flight software flying two x500 drones in Gazebo Harmonic | Windows with WSL2, Ubuntu 22.04 | **Set up and running.** |
-| **C. Kent campus world** (`campus/`) | The University of Kent OpenStreetMap export turned into a Gazebo world with 141 extruded buildings | Same as B | **Built and loads in Gazebo.** Buildings appear; ground map picture does not yet show (see *Known issues*) |
+| **C. Kent campus world** (`campus/`) | The University of Kent OpenStreetMap export turned into a Gazebo world with 141 extruded buildings | Same as B | **Built and loads in Gazebo.**  |
 
 ## Environment used
 
@@ -31,8 +31,8 @@ sim.py  scenarios.py  run_all.py  report.py  make_feeds.py  test_sim.py      A. 
 px4_setup.sh  px4_launch_sims.sh  px4_run_scenario.py  px4_gps_spoofer.py  px4_analyze.py     B. PX4 + Gazebo
 campus/make_campus_world.py  campus/kent_map.pdf                              C. campus world generator and map
 feeds/        false-data CSV files (GPS walk-off, circle, PX4 ghost tracks)
-results/      Python simulator output         px4_results/   PX4 run output (created on first run)
-config/  docs/  experiments/  src/            placeholders for your own notes and experiment files
+results/      Python simulator output         px4_results/   PX4 run output 
+config/  docs/  experiments/  src/            
 ```
 
 ## A. Python simulator
@@ -107,17 +107,17 @@ What the data shows:
 Known simplifications: point-mass drone (no attitude dynamics), 2-state filter per axis, flat Earth, no motor model.
 The simulator shows how the *logic* behaves, not how a specific airframe flies.
 
-### Fault types and adding your own
+### Fault types
 
 Faults take `t_start`, optional `t_end` and `drone`. Types: `gps_dropout`, `gps_bias_step`, `gps_drift`, `gps_feed`
-(your own CSV), `gps_freeze`, `gps_noise`, `baro_stuck`, `baro_bias`, `imu_bias`, `battery_offset`, `battery_stuck`,
+(our own CSV), `gps_freeze`, `gps_noise`, `baro_stuck`, `baro_bias`, `imu_bias`, `battery_offset`, `battery_stuck`,
 `cmd_delay`, `wind_step`, `v2v_drop`, `v2v_freeze`, `v2v_ghost`.
 
 Add a scenario in `scenarios.py`:
 ```python
 single("my_case", "GPS jumps 20 m east at t=30", [Fault("gps_bias_step", 30, params={"offset": [20, 0, 0]})]),
 ```
-or as JSON and `python run_all.py --custom my_case.json`. Your own false data goes in `feeds/*.csv` with columns
+or as JSON and `python run_all.py --custom my_case.json`. Our own false data goes in `feeds/*.csv` with columns
 `t,dx,dy,dz` (seconds since the fault start, metre offsets) and is used with `Fault("gps_feed", 20, params={"file": "mine.csv"})`.
 
 ## B. PX4 + Gazebo on Windows (WSL2)
@@ -206,7 +206,7 @@ cd campus && python make_campus_world.py && cd ..
 | Geofence, timeout | 900 m, 420 s | Set in `layout.json` |
 
 Flights: drone 0 starts on the field by Eliot College and flies to the Library, then Cornwallis. Drone 1 starts south of
-Keynes and flies to the Sports Centre, Eliot College and Rutherford. To choose your own paths, edit `LANDMARKS`, `SPAWNS`
+Keynes and flies to the Sports Centre, Eliot College and Rutherford. To choose own paths, we can edit `LANDMARKS`, `SPAWNS`
 and `MISSIONS` at the top of `make_campus_world.py` (map positions as fractions of the picture, x from the left and y from
 the top), rebuild, and check `campus/preview.png`.
 
