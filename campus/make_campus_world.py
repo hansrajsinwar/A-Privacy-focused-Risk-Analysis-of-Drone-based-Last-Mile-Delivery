@@ -14,8 +14,6 @@ Usage (Ubuntu, from ~/drone_sim/campus):
   export PX4_GZ_WORLD=kent_campus
   cd .. && ./px4_launch_sims.sh 2
 
-IMPORTANT: --width-m is how many metres the map is wide. The default (1170) is an ESTIMATE for the supplied
-Kent map. For an exact value use the corner coordinates from OpenStreetMap (Share > Image) or a known distance.
 """
 import argparse, glob, json, math, os, re, shutil, subprocess, sys
 import numpy as np
@@ -25,7 +23,7 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__))
 BUILDING_RGB = (217, 208, 201)       # OSM standard building fill
 
-# Landmarks as fractions of the image (x from left, y from top), read off the supplied Kent map.
+# Landmarks as fractions of the image (x from left, y from top).
 LANDMARKS = {
     "library":        (0.762, 0.489),
     "keynes_college": (0.559, 0.755),
@@ -35,7 +33,7 @@ LANDMARKS = {
     "cornwallis":     (0.870, 0.346),
     "west_pitches":   (0.146, 0.351),
 }
-# Open ground to take off from (checked against the building outlines at run time)
+# Open ground to take off from
 SPAWNS = {"drone0": (0.812, 0.777), "drone1": (0.590, 0.883)}
 MISSIONS = {"drone0": ["library", "cornwallis"], "drone1": ["sports_centre", "eliot_college", "rutherford"]}
 
