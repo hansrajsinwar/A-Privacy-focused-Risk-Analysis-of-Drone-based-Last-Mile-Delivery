@@ -1,0 +1,18 @@
+t,drone,kind,msg
+2.0,0,MODE,PREFLIGHT -> TAKEOFF: armed
+2.0,1,MODE,PREFLIGHT -> TAKEOFF: armed
+5.0,1,FAULT,"START gps_drift {""rate"": [0.0, 0.5, 0.0], ""spoof_velocity"": true}"
+6.74,1,MODE,TAKEOFF -> MISSION: takeoff complete
+7.04,0,MODE,TAKEOFF -> MISSION: takeoff complete
+9.32,1,AVOID,traffic 12.0 m away -> holding position
+15.7,0,INFO,waypoint 1/2 reached
+24.2,0,INFO,waypoint 2/2 reached
+24.2,0,MODE,MISSION -> RTL: mission complete
+24.32,0,MODE,RTL -> LAND: above home
+26.5,1,AVOID,traffic clear -> resuming
+32.86,1,INFO,waypoint 1/2 reached
+34.54,0,MODE,"LAND -> LANDED: touchdown, disarmed"
+41.48,1,INFO,waypoint 2/2 reached
+41.48,1,MODE,MISSION -> RTL: mission complete
+41.5,1,MODE,RTL -> LAND: above home
+51.22,1,MODE,"LAND -> LANDED: touchdown, disarmed"

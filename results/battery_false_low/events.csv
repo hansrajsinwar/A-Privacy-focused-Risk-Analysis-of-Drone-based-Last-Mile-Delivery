@@ -1,0 +1,7 @@
+t,drone,kind,msg
+2.0,0,MODE,PREFLIGHT -> TAKEOFF: armed
+7.04,0,MODE,TAKEOFF -> MISSION: takeoff complete
+15.7,0,INFO,waypoint 1/3 reached
+20.0,0,FAULT,"START battery_offset {""offset"": -85}"
+20.0,0,FAILSAFE,MISSION -> LAND: battery critical (9%)
+30.48,0,MODE,"LAND -> LANDED: touchdown, disarmed"

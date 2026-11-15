@@ -1,0 +1,32 @@
+{
+  "scenario": "gps_feed_circle",
+  "description": "False-data feed from feeds/gps_circle.csv (15 m circle, velocity not spoofed).",
+  "seed": 1,
+  "sim_time_s": 34.7,
+  "min_separation_m": null,
+  "drones": {
+    "0": {
+      "outcome": "SAFE_ABORT",
+      "reason": "emergency landing in place (drift 3.0 m), mission not completed",
+      "mission_completed": false,
+      "crashed": false,
+      "collided": false,
+      "final_mode": "LANDED",
+      "geofence_breach_true": false,
+      "max_dist_from_home_m": 39.9,
+      "max_est_error_m": 4.95,
+      "landing_error_m": 36.72,
+      "fault_start_s": 20,
+      "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 4.5 m",
+      "detection_latency_s": 3.4,
+      "failsafe_triggered": true,
+      "final_soc_true": 89.3
+    }
+  },
+  "outcome": "SAFE_ABORT",
+  "max_est_error_m": 4.95,
+  "landing_error_m": 36.72,
+  "detection_latency_s": 3.4,
+  "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 4.5 m",
+  "reason": "d0: emergency landing in place (drift 3.0 m), mission not completed"
+}

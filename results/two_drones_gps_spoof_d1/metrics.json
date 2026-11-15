@@ -1,0 +1,49 @@
+{
+  "scenario": "two_drones_gps_spoof_d1",
+  "description": "Drone 1 is GPS-spoofed with a consistent drift (0,0.5 m/s) from 5 s while sharing airspace.",
+  "seed": 1,
+  "sim_time_s": 52.2,
+  "min_separation_m": 8.94,
+  "drones": {
+    "0": {
+      "outcome": "PASS",
+      "reason": "mission completed, landed at home",
+      "mission_completed": true,
+      "crashed": false,
+      "collided": false,
+      "final_mode": "LANDED",
+      "geofence_breach_true": false,
+      "max_dist_from_home_m": 28.8,
+      "max_est_error_m": 0.58,
+      "landing_error_m": 0.88,
+      "fault_start_s": null,
+      "first_failsafe": null,
+      "detection_latency_s": null,
+      "failsafe_triggered": false,
+      "final_soc_true": 89.1
+    },
+    "1": {
+      "outcome": "DEGRADED",
+      "reason": "landed 22.2 m from home (believed it was at home)",
+      "mission_completed": true,
+      "crashed": false,
+      "collided": false,
+      "final_mode": "LANDED",
+      "geofence_breach_true": false,
+      "max_dist_from_home_m": 22.2,
+      "max_est_error_m": 23.67,
+      "landing_error_m": 22.17,
+      "fault_start_s": 5,
+      "first_failsafe": null,
+      "detection_latency_s": null,
+      "failsafe_triggered": false,
+      "final_soc_true": 83.9
+    }
+  },
+  "outcome": "DEGRADED",
+  "max_est_error_m": 23.67,
+  "landing_error_m": 22.17,
+  "detection_latency_s": null,
+  "first_failsafe": null,
+  "reason": "d0: mission completed, landed at home; d1: landed 22.2 m from home (believed it was at home)"
+}

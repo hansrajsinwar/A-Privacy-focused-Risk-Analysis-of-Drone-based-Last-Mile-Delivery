@@ -1,0 +1,32 @@
+{
+  "scenario": "baro_bias",
+  "description": "Barometer gets +8 m offset at 20 s.",
+  "seed": 1,
+  "sim_time_s": 51.9,
+  "min_separation_m": null,
+  "drones": {
+    "0": {
+      "outcome": "PASS",
+      "reason": "mission completed, landed at home",
+      "mission_completed": true,
+      "crashed": false,
+      "collided": false,
+      "final_mode": "LANDED",
+      "geofence_breach_true": false,
+      "max_dist_from_home_m": 41.7,
+      "max_est_error_m": 0.66,
+      "landing_error_m": 1.21,
+      "fault_start_s": 20,
+      "first_failsafe": null,
+      "detection_latency_s": null,
+      "failsafe_triggered": false,
+      "final_soc_true": 83.3
+    }
+  },
+  "outcome": "PASS",
+  "max_est_error_m": 0.66,
+  "landing_error_m": 1.21,
+  "detection_latency_s": null,
+  "first_failsafe": null,
+  "reason": "d0: mission completed, landed at home"
+}

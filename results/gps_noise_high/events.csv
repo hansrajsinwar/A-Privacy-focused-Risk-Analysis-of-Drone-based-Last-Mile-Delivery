@@ -1,0 +1,9 @@
+t,drone,kind,msg
+2.0,0,MODE,PREFLIGHT -> TAKEOFF: armed
+7.04,0,MODE,TAKEOFF -> MISSION: takeoff complete
+15.7,0,INFO,waypoint 1/3 reached
+24.32,0,INFO,waypoint 2/3 reached
+25.0,0,FAULT,"START gps_noise {""scale"": 10}"
+26.2,0,FAILSAFE,GPS spoof detector: position change disagrees with GPS velocity by 7.0 m
+26.2,0,MODE,MISSION -> LAND: GPS unusable -> land with dead reckoning
+36.5,0,MODE,"LAND -> LANDED: touchdown, disarmed"

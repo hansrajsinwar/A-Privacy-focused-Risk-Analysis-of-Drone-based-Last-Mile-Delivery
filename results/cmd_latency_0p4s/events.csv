@@ -1,0 +1,10 @@
+t,drone,kind,msg
+2.0,0,MODE,PREFLIGHT -> TAKEOFF: armed
+7.04,0,MODE,TAKEOFF -> MISSION: takeoff complete
+15.0,0,FAULT,"START cmd_delay {""delay"": 0.4}"
+15.7,0,INFO,waypoint 1/3 reached
+24.28,0,INFO,waypoint 2/3 reached
+32.72,0,INFO,waypoint 3/3 reached
+32.72,0,MODE,MISSION -> RTL: mission complete
+41.1,0,MODE,RTL -> LAND: above home
+51.8,0,MODE,"LAND -> LANDED: touchdown, disarmed"

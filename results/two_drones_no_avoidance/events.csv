@@ -1,0 +1,6 @@
+t,drone,kind,msg
+2.0,0,MODE,PREFLIGHT -> TAKEOFF: armed
+2.0,1,MODE,PREFLIGHT -> TAKEOFF: armed
+6.74,1,MODE,TAKEOFF -> MISSION: takeoff complete
+7.04,0,MODE,TAKEOFF -> MISSION: takeoff complete
+11.32,-1,COLLISION,drones 0 and 1 collided

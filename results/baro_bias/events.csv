@@ -1,0 +1,11 @@
+t,drone,kind,msg
+2.0,0,MODE,PREFLIGHT -> TAKEOFF: armed
+7.04,0,MODE,TAKEOFF -> MISSION: takeoff complete
+15.7,0,INFO,waypoint 1/3 reached
+20.0,0,FAULT,"START baro_bias {""offset"": 8.0}"
+23.04,0,WARN,barometer rejected by estimator for >3 s (using GPS height)
+24.32,0,INFO,waypoint 2/3 reached
+32.78,0,INFO,waypoint 3/3 reached
+32.78,0,MODE,MISSION -> RTL: mission complete
+41.18,0,MODE,RTL -> LAND: above home
+50.9,0,MODE,"LAND -> LANDED: touchdown, disarmed"
