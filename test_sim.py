@@ -64,5 +64,27 @@ class TestScenarios(unittest.TestCase):
         self.assertEqual(a["max_est_error_m"], b["max_est_error_m"])
 
 
+class TestStatistics(unittest.TestCase):
+    """run_multi.py statistics: 95 % CI uses the t distribution with n-1 degrees of freedom."""
+
+    def test_ci_five_runs(self):
+        from run_multi import stat
+        s = stat([1, 2, 3, 4, 5])
+        self.assertEqual(s["n"], 5)
+        self.assertAlmostEqual(s["mean"], 3.0)
+        self.assertAlmostEqual(s["ci95"], 2.776445 * 1.5811388 / 5 ** 0.5, places=4)   # t(0.975,4)=2.776
+
+    def test_single_run_has_no_ci(self):
+        from run_multi import stat
+        s = stat([4.2, None])
+        self.assertEqual(s["n"], 1)
+        self.assertIsNone(s["ci95"])
+
+    def test_max_error_is_per_step(self):
+        m = run("baseline")
+        d = m["drones"][0]
+        self.assertGreaterEqual(d["max_est_error_m"], d["max_est_error_logged_m"])
+
+
 if __name__ == "__main__":
     unittest.main()

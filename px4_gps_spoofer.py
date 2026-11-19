@@ -10,6 +10,13 @@ vehicle really is. Feed CSV columns: t,north,east,down  (metres, t = seconds sin
 
 To make PX4 use ONLY this GPS, silence the simulated one first (px4_run_scenario.py does this in the
 `gps_spoof_*` scenarios: failure inject SENSOR_GPS OFF, then this script).
+
+Not run by the author - verify in PX4 with `listener sensor_gps` (needs the pxh shell, i.e. start
+px4 without -d) or watch the EKF/position in QGroundControl. PX4 accepts GPS_INPUT in recent versions;
+if yours ignores it, use the failure-injection scenarios instead.
+
+  python px4_gps_spoofer.py --feed feeds/px4_ghost_walk.csv --instance 0 \
+        --anchor-lat 47.397742 --anchor-lon 8.545594 --anchor-alt 488.0
 """
 import argparse
 import math

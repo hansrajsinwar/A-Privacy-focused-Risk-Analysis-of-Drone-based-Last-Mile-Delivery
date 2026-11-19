@@ -1,189 +1,169 @@
-# A Privacy-focused Risk Analysis of Drone-based Last-Mile Delivery
+# A Privacy-focused Risk Analysis of Drone-based Last-Mile Delivery - simulation
 
-A test bench that flies one or two simulated drones over a small area, feeds them **false data** (spoofed GPS, broken
-sensors, wrong battery readings, a lying neighbour drone, a delayed command link, a failed motor) and records how each
-drone reacts. The question for every scenario is the same: does the drone notice, does it react safely, and where does it
-end up?
+Simulation part of the MSc project *A Privacy-focused Risk Analysis of Drone-based Last-Mile Delivery*
+(University of Kent, COMP7300). It tests how a delivery drone's control logic behaves when sensor, navigation,
+battery, command-link or drone-to-drone (V2V) data is wrong or spoofed.
 
-It has three parts, from fastest to most realistic:
+> **Scope.** Two studies share one simulator. **(1) Fault study** (`run_multi.py`, 25 scenarios): how a drone's control
+> logic responds to wrong or spoofed data. **(2) Remote ID study** (`remote_id.py`): whether repeated Remote ID
+> broadcasts of delivery flights reveal customer addresses to a passive observer, and what simple mitigations cost.
+> Results describe this simplified model only, not a particular airframe, commercial autopilot, Remote ID receiver or
+> real delivery service.
 
-| Part | What it is | Runs on | Status |
-|---|---|---|---|
-| **A. Python simulator** (`sim.py`) | Simple drone, sensors, Kalman filter and autopilot written for this project; 25 fault scenarios | Any computer with Python | **Tested.** 12 unit tests pass; all 25 scenarios run; results below |
-| **B. PX4 + Gazebo** (`px4_*`) | The real PX4 flight software flying two x500 drones in Gazebo Harmonic | Windows with WSL2, Ubuntu 22.04 | **Set up and running.** |
-| **C. Kent campus world** (`campus/`) | The University of Kent OpenStreetMap export turned into a Gazebo world with 141 extruded buildings | Same as B | **Built and loads in Gazebo.**  |
+| | **A. Python simulator** (`sim.py`) | **B. PX4 SITL + Gazebo** (`px4_*`) |
+|---|---|---|
+| Runs | anywhere with Python, ~1 s per scenario | WSL2/Ubuntu 22.04, Gazebo Harmonic |
+| Autopilot | a simple hand-written one (editable) | the real PX4 flight stack |
+| False data | any sensor, any shape, via CSV feeds | PX4 failure injection + GPS_INPUT spoofer |
+| Status | **tested and reproducible**: 20 unit tests, 25 scenarios x 5 seeds | **set up; baseline flight recorded. Fault runs: implemented, not yet run** |
 
-## Environment used
-
-| Item | Value |
-|---|---|
-| Computer | Windows laptop, WSL2 |
-| Linux | Ubuntu 22.04 (the default newer Ubuntu release is not supported by PX4) |
-| Flight software | PX4-Autopilot, SITL target `gz_x500`, autostart 4001 |
-| 3D simulator | Gazebo Harmonic |
-| Python | virtual environment `.venv`, `mavsdk<4` (version 4 and newer breaks `mavsdk.failure`) |
-| Drones | 2 x x500 quadcopters; instance *i* uses MAVSDK UDP port 14540+*i* and spoofer port 14580+*i* |
-
-## Repository layout
-
-```
-sim.py  scenarios.py  run_all.py  report.py  make_feeds.py  test_sim.py      A. Python simulator
-px4_setup.sh  px4_launch_sims.sh  px4_run_scenario.py  px4_gps_spoofer.py  px4_analyze.py     B. PX4 + Gazebo
-campus/make_campus_world.py  campus/kent_map.pdf                              C. campus world generator and map
-feeds/        false-data CSV files (GPS walk-off, circle, PX4 ghost tracks)
-results/      Python simulator output         px4_results/   PX4 run output 
-config/  docs/  experiments/  src/            
-```
-
-## A. Python simulator
+## Reproduce the reported results (Python simulator)
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-pip install "mavsdk<4"
-python make_feeds.py                    # writes feeds/*.csv (the false-data files)
-python run_all.py --list                # the 25 scenario names
-python run_all.py --runs 5 --out results_exp1     # every scenario 5 times (about 25 s)
-python -m unittest -v                   # 12 regression tests
+python make_feeds.py                  # creates feeds/*.csv (the false-data files)
+python -m pytest -q                   # 20 tests, expect "20 passed"
+python run_multi.py --runs 5 --seed 1 # 25 scenarios x seeds 1..5  (~30 s)  -> results_multi/
 ```
 
-Useful options: `--only baseline gps_step_jump`, `--runs 7`, `--seed 1`, `--no-plots`, `--custom my_case.json`.
-Every run uses a different noise seed (`seed + run number`), so results are repeatable.
+`results_multi/` contains everything the reported tables and figures are built from:
 
-### Results (real data: 25 scenarios x 5 runs, default seed 1)
+| file | content |
+|---|---|
+| `seed1/ ... seed5/<scenario>.json` | full metrics of every single run (per drone) |
+| `runs.csv` | one row per (scenario, seed): outcome, max error, landing error, latency, min separation |
+| `stats.csv`, `stats.md` | outcome counts, mean, SD and 95 % CI per scenario - recomputed from `runs.csv` |
+| `outcomes.png` | outcome chart (Figure 1 of the report) |
+| `errors_ci.png` | mean ± 95 % CI of estimation and landing error per scenario |
+| `manifest.json` | exact command, seeds, Python/package versions, SHA-256 of the code and feeds |
 
-Outcomes: **PASS** mission done and landed at home; **SAFE_ABORT** fault detected and landed safely; **DEGRADED** landed
-but far from where it believed it was; **HUNG** stuck in the air; **FAIL** crash, collision or left the geofence.
-Error columns are the worst case over the runs; detection latency is the mean.
+`python run_multi.py --analyze-only` rebuilds the statistics from the saved per-run files without re-simulating.
+**Single run with logs and plots:** `python run_all.py` writes `results/` (seed 1 only; one `plot.png` per scenario showing true vs believed path, altitude, estimation error and battery; 10 Hz
+`log_drone*.csv`, `events.csv`, `metrics.json`, `summary.md`). That folder is *one run per scenario*; the
+five-run statistics come only from `results_multi/`.
 
-| # | Scenario | Outcome (5 runs) | Max estimate error (m) | Landing error (m) | Detection latency (s) | Min drone separation (m) | First failsafe |
-|---|---|---|---|---|---|---|---|
-| 1 | baseline | PASS 5/5 | 0.95 | 1.57 | - | - | - |
-| 2 | wind_gust | PASS 5/5 | 1.0 | 1.62 | - | - | - |
-| 3 | gps_dropout_short | PASS 5/5 | 0.95 | 1.57 | - | - | - |
-| 4 | gps_dropout_long | SAFE_ABORT 4/5, DEGRADED 1/5 | 7.91 | 40.16 | 0.82 | - | GPS data lost for 1.0s |
-| 5 | gps_step_jump | SAFE_ABORT 4/5, DEGRADED 1/5 | 6.34 | 39.36 | 1.0 | - | GPS spoof detector: position change disagrees with GPS velocity by 13.3 m |
-| 6 | gps_drift_slow | SAFE_ABORT 4/5, DEGRADED 1/5 | 9.66 | 33.24 | 10.2 | - | GPS spoof detector: position change disagrees with GPS velocity by 3.9 m |
-| 7 | gps_drift_slow_no_detector | DEGRADED 5/5 | 14.56 | 12.82 | - | - | - |
-| 8 | gps_drift_consistent | DEGRADED 5/5 | 15.3 | 14.29 | - | - | - |
-| 9 | gps_feed_walkoff | DEGRADED 5/5 | 12.03 | 10.74 | - | - | - |
-| 10 | gps_feed_circle | SAFE_ABORT 4/5, DEGRADED 1/5 | 8.6 | 42.43 | 3.76 | - | GPS spoof detector: position change disagrees with GPS velocity by 4.5 m |
-| 11 | gps_freeze | DEGRADED 4/5, SAFE_ABORT 1/5 | 15.02 | 38.62 | 2.28 | - | GPS innovation test failing for 2.0s (inconsistent with IMU/baro) |
-| 12 | gps_noise_high | SAFE_ABORT 3/5, DEGRADED 2/5 | 10.35 | 38.87 | 1.64 | - | GPS spoof detector: position change disagrees with GPS velocity by 7.0 m |
-| 13 | baro_stuck_climb | PASS 5/5 | 3.31 | 1.56 | - | - | - |
-| 14 | baro_bias | PASS 5/5 | 0.95 | 1.57 | - | - | - |
-| 15 | imu_bias_then_gps_loss | FAIL 5/5 | 73.21 | - | 5.62 | - | GPS data lost for 1.0s |
-| 16 | battery_false_low | SAFE_ABORT 5/5 | 0.95 | 34.31 | 0.0 | - | MISSION -> LAND: battery critical (9%) |
-| 17 | battery_false_high | FAIL 5/5 | 9.74 | - | - | - | - |
-| 18 | cmd_latency_0p4s | PASS 5/5 | 1.59 | 1.85 | - | - | - |
-| 19 | cmd_latency_1s | HUNG 5/5 | 1.0 | - | - | - | - |
-| 20 | two_drones_baseline | PASS 5/5 | 0.95 | 1.33 | - | 3.96 | - |
-| 21 | two_drones_no_avoidance | FAIL 4/5, PASS 1/5 | 13.19 | 1.33 | - | 0.12 | - |
-| 22 | two_drones_v2v_freeze | FAIL 4/5, PASS 1/5 | 13.19 | 1.33 | - | 0.12 | - |
-| 23 | two_drones_v2v_drop | FAIL 4/5, PASS 1/5 | 13.19 | 1.33 | - | 0.12 | - |
-| 24 | two_drones_v2v_ghost | HUNG 5/5 | 0.95 | 1.15 | - | 6.06 | - |
-| 25 | two_drones_gps_spoof_d1 | DEGRADED 5/5 | 25.36 | 23.64 | - | 8.94 | - |
+### Metric and outcome definitions
 
-What the data shows:
+* **Time step** 0.02 s; logs are written every 0.1 s. **Max est. error** = max over *every* 0.02 s step of
+  |estimated position - true position| (3-D, metres). `max_est_error_logged_m` in the JSON is the 0.1 s-sampled value.
+* **Landing error** = horizontal distance from home to the true touchdown point (only if it landed).
+* **Detection latency** = time from the first fault start to the first failsafe event (only if a failsafe fired).
+* **Min separation** = smallest 3-D distance between the two airborne drones; **collision** if < 1 m.
+* **PASS** mission completed and landed within 5 m of home. **SAFE_ABORT** emergency landing in place that drifted
+  <= 5 m during the descent (says nothing about obstacles, people or operational safety). **DEGRADED** landed, but
+  > 5 m from home after a normal landing, or the emergency descent drifted > 5 m. **FAIL** crash, collision or true
+  position outside the geofence. **HUNG** no terminal state (landed/crashed) by the end of the simulation.
+* **Statistics**: mean +/- 95 % CI = t(0.975, n-1) x SD / sqrt(n), over the runs where the metric exists. With
+  n = 5 the t value is 2.776. A metric present in only one run is reported as "(1 run)" with no interval.
 
-- **Baseline is clean.** 5/5 PASS, maximum estimate error 0.95 m, landing 1.57 m from home. Wind gusts, a 0.6 s GPS drop,
-  a frozen or offset barometer and 0.4 s command delay do not change the outcome.
-- **Detected GPS faults end safely.** A long GPS loss, a position jump, a frozen fix, high GPS noise and a slow walk-off
-  (spoofed position only) are caught within 0.8 to 10 s and the drone lands (mostly SAFE_ABORT, some DEGRADED because it
-  lands up to about 40 m from home).
-- **A consistent GPS spoof is not detected.** When position and velocity drift together (`gps_drift_consistent`,
-  `gps_feed_walkoff`) every check passes: 5/5 DEGRADED, the drone lands about 14 m from home while believing it is at
-  home. The same slow drift with the detector switched off (`gps_drift_slow_no_detector`) also ends DEGRADED 5/5.
-- **A poisoned dead-reckoning chain crashes.** An accelerometer bias followed by GPS loss (`imu_bias_then_gps_loss`)
-  gives FAIL 5/5 with an estimate error of 73 m.
-- **False battery data is dangerous both ways.** A false low reading causes a needless emergency landing (SAFE_ABORT 5/5);
-  a false high reading hides a nearly flat battery and the drone is lost (FAIL 5/5).
-- **Control delay.** 0.4 s is tolerated; 1.0 s makes the loop unstable (HUNG 5/5).
-- **Drone-to-drone data is a weak point.** With avoidance working, drone 1 yields and stays 3.96 m away (PASS 5/5).
-  Without avoidance, or with replayed or dropped neighbour messages, the drones collide in 4 of 5 runs (minimum
-  separation 0.12 m). A fake neighbour makes drone 1 freeze forever (HUNG 5/5, a denial of service).
-- A GPS spoof on one of two drones in shared airspace leaves it DEGRADED, 23.6 m off target (`two_drones_gps_spoof_d1`).
+### Other commands
 
-Known simplifications: point-mass drone (no attitude dynamics), 2-state filter per axis, flat Earth, no motor model.
-The simulator shows how the *logic* behaves, not how a specific airframe flies.
+`python run_all.py --list`, `--only baseline gps_step_jump`, `--runs 20 --out results20`, `--no-plots`,
+`--custom my_case.json`. Per scenario in `results/<name>/`: `plot.png`, `log_drone*.csv`, `events.csv`, `metrics.json`.
+
+### What is simulated
+
+Drone physics (truth, with lag, drag, wind, gusts, battery, crash detection) -> noisy sensors (IMU, 5 Hz GPS,
+baro, battery) -> **fault layer** -> Kalman filter with innovation gating -> autopilot (takeoff, waypoints, RTL,
+land, geofence, battery failsafes, GPS-lost failsafe, GPS-spoof detector, V2V yielding). The autopilot only sees
+the *estimate*, so false data makes the true drone behave differently from what the autopilot believes - that gap is the
+thing you are measuring (`est_err` in the logs).
 
 ### Fault types
 
-Faults take `t_start`, optional `t_end` and `drone`. Types: `gps_dropout`, `gps_bias_step`, `gps_drift`, `gps_feed`
-(our own CSV), `gps_freeze`, `gps_noise`, `baro_stuck`, `baro_bias`, `imu_bias`, `battery_offset`, `battery_stuck`,
-`cmd_delay`, `wind_step`, `v2v_drop`, `v2v_freeze`, `v2v_ghost`.
+| type | params | meaning |
+|---|---|---|
+| `gps_dropout` | - | no GPS fixes |
+| `gps_bias_step` | `offset:[x,y,z]` | sudden position jump |
+| `gps_drift` | `rate:[x,y,z]` m/s, `spoof_velocity` | spoofing walk-off; `true` = velocity spoofed consistently (hard to detect) |
+| `gps_feed` | `file`, `spoof_velocity` | offsets read from a CSV `t,dx,dy,dz` (your own false data) |
+| `gps_freeze` | - | replay of a stale fix |
+| `gps_noise` | `scale` | multiply GPS noise (jamming-like) |
+| `baro_stuck` / `baro_bias` | - / `offset` | barometer frozen / offset |
+| `imu_bias` | `bias:[x,y,z]` m/s2 | accelerometer bias |
+| `battery_offset` / `battery_stuck` | `offset` | false battery readout |
+| `cmd_delay` | `delay` s | control latency |
+| `wind_step` | `vec:[x,y,z]` | environment, not an attack |
+| `v2v_drop` / `v2v_freeze` | `drone` (receiver), `target` (sender) | neighbour data lost / replayed with fresh timestamps |
+| `v2v_ghost` | `pos`, `id` | fake neighbour injected |
 
-Add a scenario in `scenarios.py`:
+All faults take `t_start`, optional `t_end`, and `drone`.
+
+### Add your own scenario
+
+In `scenarios.py` append to `_LIST`:
+
 ```python
 single("my_case", "GPS jumps 20 m east at t=30", [Fault("gps_bias_step", 30, params={"offset": [20, 0, 0]})]),
 ```
-or as JSON and `python run_all.py --custom my_case.json`. Our own false data goes in `feeds/*.csv` with columns
-`t,dx,dy,dz` (seconds since the fault start, metre offsets) and is used with `Fault("gps_feed", 20, params={"file": "mine.csv"})`.
 
-## B. PX4 + Gazebo on Windows (WSL2)
+or a JSON file (`python run_all.py --custom my_case.json`):
 
-One-time install, in Ubuntu 22.04, from the Linux home folder (not `/mnt/c`):
-
-```bash
-./px4_setup.sh                 # installs PX4, Gazebo and the Python packages (long)
-```
-If the PX4 build fails with `No module named 'menuconfig'`, a virtual environment was active: run `deactivate` and build again.
-
-### Every time: two windows
-
-```bash
-# Window 1: simulator (no .venv). Leave it open.
-export PX4_GZ_WORLD=kent_campus            # or leave unset for the small default area
-cd ~/drone_repo && ./px4_launch_sims.sh 2
-# wait about 30 s for "all running" and both drones in Gazebo
-
-# Window 2: one test (with .venv)
-cd ~/drone_repo && source .venv/bin/activate
-python px4_run_scenario.py --list
-python px4_run_scenario.py baseline --layout campus --fault-drone 0
-python px4_analyze.py px4_results/baseline
+```json
+{"name": "my_case", "description": "baro offset then GPS loss", "duration": 100,
+ "drones": [{"id": 0, "home": [0, 0], "waypoints": [[30, 0], [30, 30]]}],
+ "faults": [{"type": "baro_bias", "t_start": 15, "params": {"offset": 5}},
+            {"type": "gps_dropout", "t_start": 30, "t_end": 50}]}
 ```
 
-Restart window 1 (Ctrl+C, start again) between scenarios, because a failed sensor or a crashed drone carries into the next
-run. Stop a run with Ctrl+C, never Ctrl+Z (a paused run keeps the network ports busy).
+### Your own false-data feed
 
-### PX4 scenarios (16)
+Make a CSV `t,dx,dy,dz` (seconds since fault start, metre offsets), save in `feeds/`, and use
+`Fault("gps_feed", 20, params={"file": "mine.csv", "spoof_velocity": True})`. Edit `make_feeds.py` to generate shapes in code.
 
-`--fault-drone N` chooses which drone receives the fault. Times are seconds from the start of the mission.
+### Testing your own failsafe logic
 
-| Scenario | False data fed in | Starts (s) |
-|---|---|---|
-| baseline | none | n/a |
-| gps_off, gps_off_short | GPS off for good, or for 3 s | 25 |
-| gps_stuck, gps_wrong, gps_intermittent | GPS frozen, wrong or flickering | 25 |
-| baro_stuck, baro_wrong | barometer frozen or wrong | 15 |
-| accel_wrong, gyro_stuck, mag_wrong | motion and compass sensors bad | 20 |
-| motor_off | one motor stops | 20 |
-| gps_spoof_freeze, gps_spoof_walk, gps_spoof_walk_stop | spoofed GPS track from `feeds/px4_ghost_*.csv` (experimental) | 20 (stop at 40) |
-| link_delay_500ms | 500 ms network delay (needs sudo) | 20 to 40 |
+Thresholds live in `Params` (`sim.py`): GPS reject/timeout times, spoof-detector window/threshold, battery limits,
+avoidance distances. The logic itself is `Autopilot` - change it, re-run `python run_all.py`, compare `results/summary.md`.
+Outcomes: `PASS` (mission done, landed at home) - `SAFE_ABORT` (landed safely, mission not done) - `HUNG` (never finished)
+- `DEGRADED` (landed far from where it should, e.g. undetected spoofing) - `FAIL` (crash, collision, left geofence).
 
-Failure injection (GPS, barometer, accelerometer, gyro, compass, motor) uses the MAVSDK failure plugin with
-`SYS_FAILURE_EN=1` and is the most reliable way to feed false sensor data. The GPS spoofer sends MAVLink `GPS_INPUT`
-messages; some PX4 versions ignore them, so if a spoof run looks like the baseline use `gps_wrong` and `gps_stuck`.
+### What the results show (5 runs per scenario, seeds 1-5; see `results_multi/stats.md`)
 
-### Repeating every scenario 5 to 7 times
+- Short GPS loss is tolerated; long GPS loss lands in place within ~1 s of detection.
+- Step jumps and noisy/frozen GPS are caught by the innovation gate or the spoof detector.
+- A slow walk-off is caught only if velocity is *not* spoofed; a **consistent** spoof (position + velocity) passes every check,
+  and the drone lands ~14 m away believing it is home. Good place to add your own detection (e.g. IMU-vs-GPS velocity check).
+- False battery data causes either a needless landing or a crash. In the single crossing geometry tested, disabled, dropped or frozen neighbour data each ended in a collision in 4 of 5 seeds; this does not show the three have equivalent effects elsewhere. A fake neighbour makes the drone hover until the simulation ends (HUNG).
+- Command latency of 1 s makes the control loop unstable (drone never completes).
 
-PX4 needs a fresh simulator for every run, so a batch script restarts Gazebo between runs and saves each repeat in
-`px4_results/run1/<scenario>/`, `run2/...` and so on, then `px4_summary.py` combines them (mean, minimum and maximum per
-scenario). Estimated time is about 6 minutes per run, so 15 scenarios x 5 repeats takes 7 to 8 hours. Describe the
-experiment in `experiment.json` (name, objective, hypothesis, altitude, speed, repeats, notes); it is copied next to the
-results so the numbers stay tied to their setup. The scripts and full instructions are in the *Drone Fault Experiment Manual*.
+Known simplifications: point-mass drone (no attitude dynamics), hand-written 2-state Kalman filter per axis, flat Earth,
+fixed noise settings, **no motor model (motor failure is NOT evaluated in the Python simulator; it exists only as a PX4 scenario)**.
+It shows *how this model's logic behaves*, not how a specific airframe or autopilot flies.
 
-### Where results are saved
+## B. PX4 SITL + Gazebo
 
-| Folder | Made by | Contents |
-|---|---|---|
-| `results/<scenario>/` | `run_all.py` | `plot.png`, `log_drone*.csv` (10 Hz truth, estimate, sensors), `events.csv`, `metrics.json`; plus `results/summary.md` and `summary.csv` |
-| `px4_results/<scenario>/` | `px4_run_scenario.py` | `drone0.csv`, `drone1.csv` (time, position, speed, flight mode, battery, GPS status), `actions.json` (when each fault was fed in) |
-| `px4_results/run<k>/<scenario>/` | the batch script | the same, one folder per repeat |
+> **Files.** The `px4_*` scripts are NOT included in this folder: keep the ones already in your repository (yours include the campus layout). Apply the fixes below with `python3 patch_px4.py px4_run_scenario.py` (keeps a `.bak` copy), and run several scenarios unattended with `bash run_px4_checks.sh`.
 
-Running a scenario again overwrites its folder. In Windows, open the Ubuntu folders through
-`\\wsl$\Ubuntu-22.04\home\hans\drone_repo`.
+**Status.** Set up and the baseline flight has been recorded with real PX4 data in `results/px4_results/baseline/` (2 drones, campus world, 30 m altitude: max distance from home 368 m and 447 m, both returned to within 1.4 m, minimum separation 13.0 m). The fault scenarios below are
+*implemented but not yet run*; the batch/summary scripts were only checked with synthetic data. No PX4 fault
+outcome should be reported until logs exist in `px4_results/`. PX4 only accepts some failure types per sensor
+(baro/accel/gyro/mag: off or stuck; GPS: off, stuck or wrong-fix-type; motor/battery: off or wrong), so the
+scenario list differs from the Python one. Motor failure is a PX4 scenario only.
+
+
+```bash
+./px4_setup.sh                      # installs PX4 + Gazebo + python env (once; long)
+. .venv/bin/activate && python make_feeds.py
+./px4_launch_sims.sh 2              # terminal 1: Gazebo + 2 drones (leave running)
+python px4_run_scenario.py --list   # terminal 2
+python px4_run_scenario.py baseline --layout two
+python px4_run_scenario.py gps_off --layout two --fault-drone 0
+python px4_analyze.py px4_results/gps_off [--ulog path/to/log.ulg]
+```
+
+- **Failure injection** (`inject` actions): MAVSDK failure plugin. Supported pairs only: baro/accel/gyro/mag off or stuck; GPS off, stuck or wrong (fix type only); motor/battery off or wrong. Unsupported pairs are recorded as `rejected by PX4`.
+  Needs `SYS_FAILURE_EN=1` (the runner sets it). This is the most reliable way to feed false sensor data in PX4.
+- **GPS spoofing** (`gps_spoof_*`): turns the simulated GPS off and starts `px4_gps_spoofer.py`, which sends MAVLink
+  `GPS_INPUT` following a ghost track from `feeds/px4_ghost_*.csv`. **Experimental** - check PX4 accepts the messages
+  (`listener sensor_gps` in the PX4 shell, or watch QGroundControl).
+  It is open-loop (the reported position follows the CSV regardless of reality), unlike the simulator's closed-loop offset feeds.
+- **Link problems**: `link_delay_500ms` uses `tc netem` on loopback (sudo).
+- PX4 drone paths are in `px4_run_scenario.py` (`LAYOUTS`); the two-drone layout crosses at the same point/time like in the simulator.
+  PX4 has no V2V avoidance, so the metric is minimum separation.
+- Port assumptions: instance *i* -> MAVSDK on UDP `14540+i`, spoofer to `14580+i`. If your PX4 version differs, change `connect()` and the spoofer port.
+- `MissionItem(...)` argument lists change between MAVSDK versions; if you get a `TypeError`, compare with the mission example in your installed MAVSDK-Python.
 
 ## C. University of Kent campus world
 
@@ -210,36 +190,69 @@ Keynes and flies to the Sports Centre, Eliot College and Rutherford. To choose o
 and `MISSIONS` at the top of `make_campus_world.py` (map positions as fractions of the picture, x from the left and y from
 the top), rebuild, and check `campus/preview.png`.
 
-## Troubleshooting (problems met while building this)
+> **Not yet validated.** The map width (1170 m) and building height (14 m) are estimates and the ground image does not show (plain green). Do not draw conclusions about real flight paths or clearance until scale and building data are checked against an independent source and the world is regenerated.
+
+## D. Remote ID study (`remote_id.py`)
+
+Question: do repeated Remote ID broadcasts of delivery flights reveal where customers live, and what do mitigations cost?
+
+```bash
+python remote_id.py                    # 5 seeds x 8 customers x 3 deliveries x 6 conditions (~90 s) -> results_remote_id/
+python -m pytest -q test_remote_id.py  # 5 tests
+```
+
+Model: depot at (0,0); K customer addresses 60 to 220 m away (at least 80 m apart); the drone flies out, hovers 12 s to drop
+the parcel and returns. Once per second while airborne it broadcasts (pseudonym, *estimated* position, time). A passive
+observer hears everything (no range limit, no packet loss), estimates each address as the mean broadcast position around
+the middle of the flight, then clusters the estimates (40 m radius) into "addresses". The mitigation is applied to the
+broadcast; the flights are identical across conditions (paired comparison).
+
+| condition | what changes |
+|---|---|
+| `none` | broadcast the estimate; one fixed ID |
+| `id_rotation` | new random pseudonym for every flight |
+| `noise_25`, `noise_100` | Gaussian noise (sigma 25 m / 100 m) on every broadcast position |
+| `grid_100` | positions snapped to a 100 m grid |
+| `gps_spoof` | no mitigation, but a consistent GPS spoof acts on the drone from 20 s (links to the fault study) |
+
+Metrics: flight error (m), % of flights estimated within 30 m, % of addresses recovered, % of flights linkable by ID,
+and broadcast-vs-true position error (utility loss or integrity). Output: `runs.csv` (per seed and condition),
+`flights.csv` (every flight), `stats.md` / `stats.csv` (mean +/- 95 % CI), `remote_id_summary.png`, `remote_id_map.png`,
+`manifest.json`.
+
+## Files
+
+```
+sim.py  scenarios.py  run_all.py  run_multi.py  make_outcome_chart.py  make_ci_chart.py  report.py  make_feeds.py  test_sim.py     fault study
+remote_id.py  test_remote_id.py     Remote ID study (results_remote_id/)
+patch_px4.py  run_px4_checks.sh     PX4 helpers (your own px4_*.py / px4_*.sh stay as they are)
+feeds/   false-data CSVs          results/   one-run output          results_multi/   5-seed records and statistics
+```
+
+## Environment used (PX4 part)
+
+| Item | Value |
+|---|---|
+| Computer | Windows laptop, WSL2 |
+| Linux | Ubuntu 22.04 (newer default Ubuntu releases are not supported by PX4) |
+| Flight software | PX4-Autopilot, SITL target `gz_x500`, autostart 4001 |
+| 3D simulator | Gazebo Harmonic |
+| Python | virtual environment `.venv`, `mavsdk<4` (version 4 and newer breaks `mavsdk.failure`) |
+| Drones | x500 quadcopters; instance *i* uses MAVSDK UDP port 14540+*i*, spoofer port 14580+*i* |
+| Windows access to results | `\\wsl$\Ubuntu-22.04\home\hans\drone_repo` |
+
+Every time: window 1 (no `.venv`) `export PX4_GZ_WORLD=kent_campus; ./px4_launch_sims.sh 2`; window 2 (with `.venv`)
+`python px4_run_scenario.py <scenario>`. Restart window 1 between scenarios. Stop with Ctrl+C, never Ctrl+Z.
+
+## Troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `Unable to locate package gz-harmonic` | Unsupported default Ubuntu release | Install and use Ubuntu 22.04 |
-| `No module named 'menuconfig'` during the PX4 build | Virtual environment active | `deactivate`, then build again |
+| `Unable to locate package gz-harmonic` | Unsupported Ubuntu release | Use Ubuntu 22.04 |
+| `No module named 'menuconfig'` in the PX4 build | Virtual environment active | `deactivate`, build again |
 | `LegacyModuleError ... mavsdk.failure` | `mavsdk` 4 or newer | `pip install "mavsdk<4"` |
 | `python: command not found` | New window without the environment | `source .venv/bin/activate` |
-| `bind error: Address in use` | An old run (often paused with Ctrl+Z) holds the ports | `pkill -9 -f mavsdk_server; pkill -9 -f px4_run_scenario`, then rerun |
-| Only one drone visible in Gazebo | The camera follows drone 1 | Zoom out or use Move to in the Entity Tree |
-| Run refuses to arm (no ground-station connection) | PX4 safety check | Set `NAV_DLL_ACT` to 0 |
+| `bind error: Address in use` | Old run (often paused with Ctrl+Z) holds the ports | `pkill -9 -f mavsdk_server; pkill -9 -f px4_run_scenario`, rerun |
+| `FailureError UNSUPPORTED` | PX4 does not support that failure type for that unit | Use the supported pairs listed in section B |
+| Only one drone visible in Gazebo | Camera follows drone 1 | Zoom out or use Move to in the Entity Tree |
 | `FutureWarning: 'mavsdk' has been renamed` | Library notice | Harmless |
-
-## Known issues and not yet done
-
-- **PX4 fault runs not yet recorded.** The simulator and both drones start correctly; no `px4_results` have been collected
-  yet, so this README contains no PX4 result numbers. The PX4 scripts (mission upload, failure injection, GPS spoofer, batch
-  script, summary script) were written from the PX4 and MAVSDK documentation and checked only on made-up data.
-- **Campus ground picture missing.** In Gazebo the buildings appear but the ground is plain green instead of the map.
-  Check the `albedo_map` path in the generated `kent_campus.sdf` and try `--flip-y`.
-- **Estimated map scale (1170 m) and building height (14 m)** need real values.
-- **Spoofed GPS (`gps_spoof_*`)** is experimental and may be ignored by some PX4 versions.
-
-## Experiment record
-
-| Field | Value |
-|---|---|
-| Name | Privacy-focused risk analysis of drone-based last-mile delivery |
-| Simulators | Python simulator; PX4 + Gazebo Harmonic |
-| World | University of Kent campus (`kent_campus`), 2 drones, 30 m altitude |
-| Repeats | 5 to 7 per scenario |
-| Date of Python results above | 2026-11 (25 scenarios x 5 runs, seed 1) |
-| Researcher | Hansraj Sinwar |

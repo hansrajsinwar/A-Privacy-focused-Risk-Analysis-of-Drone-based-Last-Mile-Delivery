@@ -1,0 +1,14 @@
+HOW TO APPLY (details in the chat)
+
+1. Unzip this pack. Copy ALL of its files and folders into your local repository folder.
+   KEEP your own: px4_*.py, px4_*.sh, campus/, feeds/, scenarios.py, report.py, run_all.py, make_feeds.py.
+   (results/ is merged: your results/px4_results/baseline stays.)
+2. In a terminal inside the repo folder:
+     python3 patch_px4.py px4_run_scenario.py            # PX4 fix, keeps your campus layout
+     python3 -m venv .venv && source .venv/bin/activate
+     pip install -r requirements.txt
+     python -m pytest -q                                  # expect: 20 passed
+     python run_multi.py --runs 5 --seed 1                # fault study  (~30 s)
+     python remote_id.py                                  # Remote ID study (~90 s)
+3. Upload to GitHub (website): repo page > Add file > Upload files > drag the files and folders > Commit changes.
+   Or with git:  git add -A && git commit -m "Add Remote ID study, five-seed analysis, results, docs" && git push

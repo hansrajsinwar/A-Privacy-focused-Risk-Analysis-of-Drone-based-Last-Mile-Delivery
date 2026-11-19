@@ -67,16 +67,22 @@ SCENARIOS = {
     "gps_wrong": [{"t": 25, "do": "inject", "unit": "SENSOR_GPS", "type": "WRONG"}],
     "gps_intermittent": [{"t": 25, "do": "inject", "unit": "SENSOR_GPS", "type": "INTERMITTENT"}],
     "baro_stuck": [{"t": 15, "do": "inject", "unit": "SENSOR_BARO", "type": "STUCK"}],
-    "baro_wrong": [{"t": 15, "do": "inject", "unit": "SENSOR_BARO", "type": "WRONG"}],
-    "accel_wrong": [{"t": 20, "do": "inject", "unit": "SENSOR_ACCEL", "type": "WRONG"}],
+    "baro_off": [{"t": 15, "do": "inject", "unit": "SENSOR_BARO", "type": "OFF"}],
+    "accel_stuck": [{"t": 20, "do": "inject", "unit": "SENSOR_ACCEL", "type": "STUCK"}],
+    "accel_off": [{"t": 20, "do": "inject", "unit": "SENSOR_ACCEL", "type": "OFF"}],
+    "gyro_off": [{"t": 20, "do": "inject", "unit": "SENSOR_GYRO", "type": "OFF"}],
     "gyro_stuck": [{"t": 20, "do": "inject", "unit": "SENSOR_GYRO", "type": "STUCK"}],
-    "mag_wrong": [{"t": 20, "do": "inject", "unit": "SENSOR_MAG", "type": "WRONG"}],
+    "mag_stuck": [{"t": 20, "do": "inject", "unit": "SENSOR_MAG", "type": "STUCK"}],
+    "mag_off": [{"t": 20, "do": "inject", "unit": "SENSOR_MAG", "type": "OFF"}],
     "motor_off": [{"t": 20, "do": "inject", "unit": "SYSTEM_MOTOR", "type": "OFF", "instance": 1}],
+    "motor_wrong": [{"t": 20, "do": "inject", "unit": "SYSTEM_MOTOR", "type": "WRONG", "instance": 1}],
+    "battery_off": [{"t": 20, "do": "inject", "unit": "SYSTEM_BATTERY", "type": "OFF"}],
+    "battery_wrong": [{"t": 20, "do": "inject", "unit": "SYSTEM_BATTERY", "type": "WRONG"}],
     "gps_spoof_freeze": [{"t": 20, "do": "spoof", "feed": "feeds/px4_ghost_freeze.csv"}],
     "gps_spoof_walk": [{"t": 20, "do": "spoof", "feed": "feeds/px4_ghost_walk.csv"}],
     "gps_spoof_walk_stop": [{"t": 20, "do": "spoof", "feed": "feeds/px4_ghost_walk.csv"},
                             {"t": 40, "do": "unspoof"}],
-   
+    # link degradation on loopback (needs sudo; remove afterwards: sudo tc qdisc del dev lo root)
     "link_delay_500ms": [{"t": 20, "do": "shell", "cmd": "sudo tc qdisc add dev lo root netem delay 500ms"},
                          {"t": 40, "do": "shell", "cmd": "sudo tc qdisc del dev lo root"}],
 }
@@ -122,6 +128,10 @@ async def run_drone(idx, scenario, wps, actions, outdir, timeout, results):
 
     # safety/fault-injection parameters
     await drone.param.set_param_int("SYS_FAILURE_EN", 1)
+    try:
+        await drone.param.set_param_int("CA_FAILURE_MODE", 1)      # needed for motor failures
+    except Exception as ex:
+        print(f"[d{idx}] note: could not set CA_FAILURE_MODE ({ex})")
     await drone.param.set_param_int("GF_ACTION", 3)                 # geofence -> return
     await drone.param.set_param_float("GF_MAX_HOR_DIST", CFG["fence_hor"])
     await drone.param.set_param_float("GF_MAX_VER_DIST", CFG["fence_ver"])
@@ -184,7 +194,11 @@ async def run_drone(idx, scenario, wps, actions, outdir, timeout, results):
                 a = mine.pop(0)
                 print(f"[d{idx}] t={el:5.1f}s  {a}")
                 if a["do"] == "inject":
-                    await drone.failure.inject(FAILURE_UNITS[a["unit"]], FAILURE_TYPES[a["type"]], a.get("instance", 0))
+                    try:
+                        await drone.failure.inject(FAILURE_UNITS[a["unit"]], FAILURE_TYPES[a["type"]], a.get("instance", 0))
+                    except Exception as ex:
+                        print(f"[d{idx}] PX4 REJECTED this failure (not supported): {ex}")
+                        a = dict(a, error="rejected by PX4")
                 elif a["do"] == "spoof":
                     await drone.failure.inject(FailureUnit.SENSOR_GPS, FailureType.OFF, 0)      # silence sim GPS
                     spoof_proc = subprocess.Popen([

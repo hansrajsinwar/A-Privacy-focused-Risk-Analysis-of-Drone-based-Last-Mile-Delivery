@@ -1,12 +1,16 @@
-# pure-Python simulator
-numpy
-matplotlib
+# Python simulator and analysis. Works on Python 3.10+ (Ubuntu 22.04 default).
+# The results were produced with Python 3.13, numpy 2.5.3, scipy 1.18.1, matplotlib 3.11.2 (see results_multi/manifest.json).
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
+pytest>=7
 
-# PX4 / Gazebo part (px4_*.py) - only needed if you use PX4 SITL
-mavsdk
+# PX4 / Gazebo part (px4_*.py) - only needed if you use PX4 SITL (install inside the WSL/Ubuntu venv)
+mavsdk<4
 pymavlink
 pyulog
 pandas
 
+# Campus world generator (campus/make_campus_world.py)
 opencv-python-headless
 pillow

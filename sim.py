@@ -68,6 +68,7 @@ class DroneConfig:
     cruise_alt: float = 10.0
     cruise_speed: float = 4.0
     initial_soc: float = 100.0
+    dwell_s: float = 0.0             # hover time at each waypoint (s); 0 = none. Used for delivery drops (remote_id.py)
 
 
 @dataclass
@@ -303,7 +304,9 @@ class Estimator:
         return {"rejected": not ok, "nis": nis}
 
 
-
+# ----------------------------------------------------------------------------
+# Autopilot: mission logic + failsafes (this is the "system under test")
+# ----------------------------------------------------------------------------
 ACTIVE_MODES = ("TAKEOFF", "MISSION", "RTL", "LAND")
 
 
@@ -314,6 +317,8 @@ class Autopilot:
         self.armed = False
         self.home = np.array([cfg.home[0], cfg.home[1], 0.0])
         self.wp_idx = 0
+        self._dwell_wp = -1          # waypoint currently being dwelt at
+        self._dwell_until = 0.0
         self.mission_done = False
         self.gps_ok = True
         self.last_gps_t = 0.0
@@ -484,7 +489,14 @@ class Autopilot:
         if m == "MISSION":
             wp = np.array(c.waypoints[self.wp_idx], float)
             tgt = np.array([wp[0], wp[1], c.cruise_alt])
-            if math.hypot(*(p[:2] - wp)) < P.wp_radius and abs(p[2] - c.cruise_alt) < 2.0:
+            reached = math.hypot(*(p[:2] - wp)) < P.wp_radius and abs(p[2] - c.cruise_alt) < 2.0
+            if reached and c.dwell_s > 0:
+                if self._dwell_wp != self.wp_idx:
+                    self._dwell_wp = self.wp_idx
+                    self._dwell_until = t + c.dwell_s
+                    self.event(t, "INFO", f"hovering {c.dwell_s:.0f} s at waypoint {self.wp_idx + 1}")
+                reached = t >= self._dwell_until
+            if reached:
                 self.wp_idx += 1
                 self.event(t, "INFO", f"waypoint {self.wp_idx}/{len(c.waypoints)} reached")
                 if self.wp_idx >= len(c.waypoints):
@@ -609,6 +621,7 @@ class Vehicle:
         self.soc_rep = dc.initial_soc
         self.rows = []
         self.land_start = None      # true xy where the LAND phase began (to judge emergency landings)
+        self.max_err = 0.0          # max |estimate - truth| over EVERY physics step (0.02 s), not just logged rows
 
     @property
     def terminal(self):
@@ -661,6 +674,9 @@ class Simulation:
                 if v.ap.mode == "LAND" and v.land_start is None:
                     v.land_start = v.phys.pos[:2].copy()
                 v.phys.step(t, c, dt, v.ap.armed)
+                e_now = float(np.linalg.norm(v.est.pos - v.phys.pos))
+                if e_now > v.max_err:
+                    v.max_err = e_now
             self._separation(t)
             if k % log_div == 0:
                 self._log(t)
@@ -788,7 +804,8 @@ class Simulation:
                 "final_mode": ap.mode,
                 "geofence_breach_true": breach,
                 "max_dist_from_home_m": round(float(dist.max()), 1),
-                "max_est_error_m": round(float(err.max()), 2),
+                "max_est_error_m": round(float(v.max_err), 2),          # every 0.02 s step
+                "max_est_error_logged_m": round(float(err.max()), 2),    # 0.1 s log rows only (for comparison)
                 "landing_error_m": None if land_err is None else round(land_err, 2),
                 "fault_start_s": t_fault,
                 "first_failsafe": fs[0]["msg"] if fs else None,

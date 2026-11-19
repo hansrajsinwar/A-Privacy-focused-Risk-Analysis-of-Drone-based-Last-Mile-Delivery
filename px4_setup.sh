@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-
+# px4_setup.sh - one-time setup for PX4 SITL + Gazebo on Ubuntu 22.04/24.04 (native, VM or WSL2 with GUI).
+# Written against the PX4 docs; check https://docs.px4.io/main/en/simulation/ if a step has changed.
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,7 +13,7 @@ cd "$PX4_PARENT"
 [ -d PX4-Autopilot ] || git clone https://github.com/PX4/PX4-Autopilot.git --recursive
 cd PX4-Autopilot
 
-# installs the toolchain AND Gazebo (gz) - takes a while; reboot/log out afterwards if it asks we to
+# installs the toolchain AND Gazebo (gz) - takes a while; reboot/log out afterwards if it asks you to
 bash ./Tools/setup/ubuntu.sh
 
 # build the SITL binary (does not start the simulator)
