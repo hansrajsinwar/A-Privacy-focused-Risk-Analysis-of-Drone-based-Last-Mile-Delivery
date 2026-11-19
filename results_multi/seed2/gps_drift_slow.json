@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_drift_slow",
+ "description": "Slow spoofing walk-off 0.4 m/s, velocity NOT spoofed. Detector should catch it.",
+ "seed": 2,
+ "sim_time_s": 43.0,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "SAFE_ABORT",
+   "reason": "emergency landing in place (drift 3.6 m), mission not completed",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.0,
+   "max_est_error_m": 4.91,
+   "max_est_error_logged_m": 4.9,
+   "landing_error_m": 30.17,
+   "fault_start_s": 20,
+   "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 4.5 m",
+   "detection_latency_s": 10.4,
+   "failsafe_triggered": true,
+   "final_soc_true": 86.5
+  }
+ },
+ "outcome": "SAFE_ABORT",
+ "max_est_error_m": 4.91,
+ "landing_error_m": 30.17,
+ "detection_latency_s": 10.4,
+ "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 4.5 m",
+ "reason": "d0: emergency landing in place (drift 3.6 m), mission not completed"
+}

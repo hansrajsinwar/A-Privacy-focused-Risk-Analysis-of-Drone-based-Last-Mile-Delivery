@@ -1,0 +1,33 @@
+{
+ "scenario": "battery_false_high",
+ "description": "Real battery is nearly flat (20%) but reads +70 -> drone flies until power dies.",
+ "seed": 3,
+ "sim_time_s": 47.3,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "FAIL",
+   "reason": "hard impact at 9.2 m/s",
+   "mission_completed": true,
+   "crashed": true,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.5,
+   "max_est_error_m": 8.86,
+   "max_est_error_logged_m": 8.86,
+   "landing_error_m": null,
+   "fault_start_s": 0,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 0.0
+  }
+ },
+ "outcome": "FAIL",
+ "max_est_error_m": 8.86,
+ "landing_error_m": null,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: hard impact at 9.2 m/s"
+}

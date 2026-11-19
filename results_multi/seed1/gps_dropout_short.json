@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_dropout_short",
+ "description": "GPS lost for 0.6 s. Should be tolerated (no failsafe).",
+ "seed": 1,
+ "sim_time_s": 52.9,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.7,
+   "max_est_error_m": 0.66,
+   "max_est_error_logged_m": 0.63,
+   "landing_error_m": 1.18,
+   "fault_start_s": 25.0,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 83.0
+  }
+ },
+ "outcome": "PASS",
+ "max_est_error_m": 0.66,
+ "landing_error_m": 1.18,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mission completed, landed at home"
+}

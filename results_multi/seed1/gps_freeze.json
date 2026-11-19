@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_freeze",
+ "description": "GPS replays a stale fix (frozen position + velocity) from 25 s.",
+ "seed": 1,
+ "sim_time_s": 38.7,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "DEGRADED",
+   "reason": "emergency landing drifted 6.3 m during descent",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.7,
+   "max_est_error_m": 6.26,
+   "max_est_error_logged_m": 6.25,
+   "landing_error_m": 30.07,
+   "fault_start_s": 25.0,
+   "first_failsafe": "GPS innovation test failing for 2.0s (inconsistent with IMU/baro)",
+   "detection_latency_s": 2.4,
+   "failsafe_triggered": true,
+   "final_soc_true": 87.9
+  }
+ },
+ "outcome": "DEGRADED",
+ "max_est_error_m": 6.26,
+ "landing_error_m": 30.07,
+ "detection_latency_s": 2.4,
+ "first_failsafe": "GPS innovation test failing for 2.0s (inconsistent with IMU/baro)",
+ "reason": "d0: emergency landing drifted 6.3 m during descent"
+}

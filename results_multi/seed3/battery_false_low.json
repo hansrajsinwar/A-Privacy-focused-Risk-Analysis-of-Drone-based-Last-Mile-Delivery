@@ -1,0 +1,33 @@
+{
+ "scenario": "battery_false_low",
+ "description": "Battery reading falsely drops 85 points at 20 s -> unnecessary emergency landing.",
+ "seed": 3,
+ "sim_time_s": 31.1,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "SAFE_ABORT",
+   "reason": "emergency landing in place (drift 0.1 m), mission not completed",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 33.5,
+   "max_est_error_m": 0.5,
+   "max_est_error_logged_m": 0.49,
+   "landing_error_m": 32.85,
+   "fault_start_s": 20,
+   "first_failsafe": "MISSION -> LAND: battery critical (9%)",
+   "detection_latency_s": 0.0,
+   "failsafe_triggered": true,
+   "final_soc_true": 90.6
+  }
+ },
+ "outcome": "SAFE_ABORT",
+ "max_est_error_m": 0.5,
+ "landing_error_m": 32.85,
+ "detection_latency_s": 0.0,
+ "first_failsafe": "MISSION -> LAND: battery critical (9%)",
+ "reason": "d0: emergency landing in place (drift 0.1 m), mission not completed"
+}

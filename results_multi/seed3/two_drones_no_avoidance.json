@@ -1,0 +1,51 @@
+{
+ "scenario": "two_drones_no_avoidance",
+ "description": "Same, avoidance disabled -> shows why it is needed.",
+ "seed": 3,
+ "sim_time_s": 13.8,
+ "min_separation_m": 0.73,
+ "drones": {
+  "0": {
+   "outcome": "FAIL",
+   "reason": "mid-air collision",
+   "mission_completed": false,
+   "crashed": true,
+   "collided": true,
+   "final_mode": "MISSION",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 19.0,
+   "max_est_error_m": 13.69,
+   "max_est_error_logged_m": 12.88,
+   "landing_error_m": null,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 96.2
+  },
+  "1": {
+   "outcome": "FAIL",
+   "reason": "mid-air collision",
+   "mission_completed": false,
+   "crashed": true,
+   "collided": true,
+   "final_mode": "MISSION",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 20.8,
+   "max_est_error_m": 13.42,
+   "max_est_error_logged_m": 12.62,
+   "landing_error_m": null,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 96.2
+  }
+ },
+ "outcome": "FAIL",
+ "max_est_error_m": 13.69,
+ "landing_error_m": null,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mid-air collision; d1: mid-air collision"
+}

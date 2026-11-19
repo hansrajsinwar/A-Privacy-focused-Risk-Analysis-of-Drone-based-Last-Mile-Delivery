@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_feed_circle",
+ "description": "False-data feed from feeds/gps_circle.csv (15 m circle, velocity not spoofed).",
+ "seed": 3,
+ "sim_time_s": 34.7,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "DEGRADED",
+   "reason": "emergency landing drifted 6.5 m during descent",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 40.3,
+   "max_est_error_m": 8.61,
+   "max_est_error_logged_m": 8.6,
+   "landing_error_m": 40.06,
+   "fault_start_s": 20,
+   "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 6.1 m",
+   "detection_latency_s": 3.8,
+   "failsafe_triggered": true,
+   "final_soc_true": 89.3
+  }
+ },
+ "outcome": "DEGRADED",
+ "max_est_error_m": 8.61,
+ "landing_error_m": 40.06,
+ "detection_latency_s": 3.8,
+ "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 6.1 m",
+ "reason": "d0: emergency landing drifted 6.5 m during descent"
+}

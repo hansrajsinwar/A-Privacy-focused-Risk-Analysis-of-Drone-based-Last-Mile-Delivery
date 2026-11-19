@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_step_jump",
+ "description": "GPS position suddenly jumps (12,-8) m. Expect innovation gate to reject it -> land.",
+ "seed": 3,
+ "sim_time_s": 37.1,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "DEGRADED",
+   "reason": "emergency landing drifted 6.7 m during descent",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.5,
+   "max_est_error_m": 6.35,
+   "max_est_error_logged_m": 6.34,
+   "landing_error_m": 39.07,
+   "fault_start_s": 25.0,
+   "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 13.7 m",
+   "detection_latency_s": 1.0,
+   "failsafe_triggered": true,
+   "final_soc_true": 88.5
+  }
+ },
+ "outcome": "DEGRADED",
+ "max_est_error_m": 6.35,
+ "landing_error_m": 39.07,
+ "detection_latency_s": 1.0,
+ "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 13.7 m",
+ "reason": "d0: emergency landing drifted 6.7 m during descent"
+}

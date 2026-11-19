@@ -1,0 +1,33 @@
+{
+ "scenario": "cmd_latency_0p4s",
+ "description": "0.4 s command latency from 15 s (control loop delay).",
+ "seed": 3,
+ "sim_time_s": 52.6,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 42.1,
+   "max_est_error_m": 1.51,
+   "max_est_error_logged_m": 1.44,
+   "landing_error_m": 1.37,
+   "fault_start_s": 15,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 82.9
+  }
+ },
+ "outcome": "PASS",
+ "max_est_error_m": 1.51,
+ "landing_error_m": 1.37,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mission completed, landed at home"
+}

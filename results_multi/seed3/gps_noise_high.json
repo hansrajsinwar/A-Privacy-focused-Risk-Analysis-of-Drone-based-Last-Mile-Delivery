@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_noise_high",
+ "description": "GPS noise x10 from 25-60 s (jamming-like degradation).",
+ "seed": 3,
+ "sim_time_s": 38.2,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "DEGRADED",
+   "reason": "emergency landing drifted 9.7 m during descent",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.5,
+   "max_est_error_m": 10.37,
+   "max_est_error_logged_m": 10.35,
+   "landing_error_m": 38.87,
+   "fault_start_s": 25.0,
+   "first_failsafe": "GPS innovation test failing for 2.0s (inconsistent with IMU/baro)",
+   "detection_latency_s": 2.0,
+   "failsafe_triggered": true,
+   "final_soc_true": 88.1
+  }
+ },
+ "outcome": "DEGRADED",
+ "max_est_error_m": 10.37,
+ "landing_error_m": 38.87,
+ "detection_latency_s": 2.0,
+ "first_failsafe": "GPS innovation test failing for 2.0s (inconsistent with IMU/baro)",
+ "reason": "d0: emergency landing drifted 9.7 m during descent"
+}

@@ -1,0 +1,51 @@
+{
+ "scenario": "two_drones_v2v_drop",
+ "description": "Drone 1 stops receiving drone 0's broadcasts from 5 s (jamming).",
+ "seed": 1,
+ "sim_time_s": 13.8,
+ "min_separation_m": 0.78,
+ "drones": {
+  "0": {
+   "outcome": "FAIL",
+   "reason": "mid-air collision",
+   "mission_completed": false,
+   "crashed": true,
+   "collided": true,
+   "final_mode": "MISSION",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 18.8,
+   "max_est_error_m": 13.61,
+   "max_est_error_logged_m": 13.08,
+   "landing_error_m": null,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 96.2
+  },
+  "1": {
+   "outcome": "FAIL",
+   "reason": "mid-air collision",
+   "mission_completed": false,
+   "crashed": true,
+   "collided": true,
+   "final_mode": "MISSION",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 19.9,
+   "max_est_error_m": 13.47,
+   "max_est_error_logged_m": 12.94,
+   "landing_error_m": null,
+   "fault_start_s": 5,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 96.2
+  }
+ },
+ "outcome": "FAIL",
+ "max_est_error_m": 13.61,
+ "landing_error_m": null,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mid-air collision; d1: mid-air collision"
+}

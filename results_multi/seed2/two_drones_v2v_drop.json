@@ -1,0 +1,51 @@
+{
+ "scenario": "two_drones_v2v_drop",
+ "description": "Drone 1 stops receiving drone 0's broadcasts from 5 s (jamming).",
+ "seed": 2,
+ "sim_time_s": 36.6,
+ "min_separation_m": 1.6,
+ "drones": {
+  "0": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 28.8,
+   "max_est_error_m": 0.96,
+   "max_est_error_logged_m": 0.95,
+   "landing_error_m": 1.07,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 88.8
+  },
+  "1": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 29.3,
+   "max_est_error_m": 0.83,
+   "max_est_error_logged_m": 0.83,
+   "landing_error_m": 1.33,
+   "fault_start_s": 5,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 89.7
+  }
+ },
+ "outcome": "PASS",
+ "max_est_error_m": 0.96,
+ "landing_error_m": 1.33,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mission completed, landed at home; d1: mission completed, landed at home"
+}

@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_freeze",
+ "description": "GPS replays a stale fix (frozen position + velocity) from 25 s.",
+ "seed": 3,
+ "sim_time_s": 38.7,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "DEGRADED",
+   "reason": "emergency landing drifted 13.1 m during descent",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.5,
+   "max_est_error_m": 15.03,
+   "max_est_error_logged_m": 15.02,
+   "landing_error_m": 36.66,
+   "fault_start_s": 25.0,
+   "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 8.3 m",
+   "detection_latency_s": 2.4,
+   "failsafe_triggered": true,
+   "final_soc_true": 87.8
+  }
+ },
+ "outcome": "DEGRADED",
+ "max_est_error_m": 15.03,
+ "landing_error_m": 36.66,
+ "detection_latency_s": 2.4,
+ "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 8.3 m",
+ "reason": "d0: emergency landing drifted 13.1 m during descent"
+}

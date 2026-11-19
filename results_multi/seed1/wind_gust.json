@@ -1,0 +1,33 @@
+{
+ "scenario": "wind_gust",
+ "description": "Wind step of (8,4) m/s from 20-45 s. Environmental disturbance, not an attack.",
+ "seed": 1,
+ "sim_time_s": 55.2,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 42.3,
+   "max_est_error_m": 0.62,
+   "max_est_error_logged_m": 0.6,
+   "landing_error_m": 1.06,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 82.3
+  }
+ },
+ "outcome": "PASS",
+ "max_est_error_m": 0.62,
+ "landing_error_m": 1.06,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mission completed, landed at home"
+}

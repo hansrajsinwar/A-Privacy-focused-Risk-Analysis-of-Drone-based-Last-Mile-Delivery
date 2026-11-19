@@ -1,0 +1,51 @@
+{
+ "scenario": "two_drones_v2v_ghost",
+ "description": "Fake neighbour injected on drone 1's path at 12 s -> drone 1 freezes forever (denial of service).",
+ "seed": 1,
+ "sim_time_s": 120.0,
+ "min_separation_m": 6.06,
+ "drones": {
+  "0": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 28.8,
+   "max_est_error_m": 0.59,
+   "max_est_error_logged_m": 0.58,
+   "landing_error_m": 0.88,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 89.1
+  },
+  "1": {
+   "outcome": "HUNG",
+   "reason": "still in MISSION at end of simulation",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "MISSION",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 9.8,
+   "max_est_error_m": 0.45,
+   "max_est_error_logged_m": 0.44,
+   "landing_error_m": null,
+   "fault_start_s": 12,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 64.1
+  }
+ },
+ "outcome": "HUNG",
+ "max_est_error_m": 0.59,
+ "landing_error_m": 0.88,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mission completed, landed at home; d1: still in MISSION at end of simulation"
+}
