@@ -1,0 +1,56 @@
+{
+ "command": "python run_multi.py --runs 5 --seed 1",
+ "scenarios": [
+  "baseline",
+  "wind_gust",
+  "gps_dropout_short",
+  "gps_dropout_long",
+  "gps_step_jump",
+  "gps_drift_slow",
+  "gps_drift_slow_no_detector",
+  "gps_drift_consistent",
+  "gps_feed_walkoff",
+  "gps_feed_circle",
+  "gps_freeze",
+  "gps_noise_high",
+  "baro_stuck_climb",
+  "baro_bias",
+  "imu_bias_then_gps_loss",
+  "battery_false_low",
+  "battery_false_high",
+  "cmd_latency_0p4s",
+  "cmd_latency_1s",
+  "two_drones_baseline",
+  "two_drones_no_avoidance",
+  "two_drones_v2v_freeze",
+  "two_drones_v2v_drop",
+  "two_drones_v2v_ghost",
+  "two_drones_gps_spoof_d1"
+ ],
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "runs_per_scenario": 5,
+ "python": "3.13.18",
+ "numpy": "2.5.5",
+ "scipy": "1.18.1",
+ "matplotlib": "3.11.2",
+ "platform": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+ "code_sha256_16": {
+  "sim.py": "dc160317294c5859",
+  "scenarios.py": "57568e95b1f8c000",
+  "run_multi.py": "0f178135f5d97b16"
+ },
+ "feeds_sha256_16": {
+  "gps_circle.csv": "99bc8b3ae30dd395",
+  "gps_walkoff.csv": "6aef55c8c5883f3e",
+  "px4_ghost_freeze.csv": "d48f4e81b7c95279",
+  "px4_ghost_walk.csv": "cb0fb3b7e0120fc5"
+ },
+ "wall_time_s": 40.1,
+ "run_finished": "2026-11-19 22:08:29"
+}
