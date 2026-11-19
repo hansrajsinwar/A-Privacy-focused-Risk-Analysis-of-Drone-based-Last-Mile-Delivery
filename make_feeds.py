@@ -12,7 +12,6 @@ PX4 "ghost track" feeds (open-loop, fed to px4_gps_spoofer.py as GPS_INPUT):
     px4_ghost_freeze.csv   reported position never moves (vehicle "believes" it is hovering)
     px4_ghost_walk.csv     reported position walks north at 0.5 m/s
 
-Edit this file or drop in your own CSVs (same columns) to feed any false data you like.
 """
 import os
 
