@@ -37,4 +37,4 @@ This file lists what the model assumes. Every result in the report is a result *
 ## Not modelled
 - Real Remote ID message formats and regulation details, multiple simultaneous drones, observer placement and range, side information (order times, addresses), adaptive attackers.
 - Motor failure (a PX4 scenario only), obstacles, buildings, radio propagation, regulations.
-- PX4 fault outcomes: only the PX4 baseline has been flown; fault scenarios are implemented but not yet run.
+- PX4 fault outcomes: only the PX4 baseline has been flown; fault scenarios are implemented.
