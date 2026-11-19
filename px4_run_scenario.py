@@ -8,8 +8,7 @@ px4_run_scenario.py - fly a mission on PX4 SITL (Gazebo), inject faults at set t
   python px4_run_scenario.py gps_spoof_walk --layout single
   python px4_run_scenario.py baro_stuck --layout two          # both drones fly, fault goes to drone 0
 
-Prereq: ./px4_launch_sims.sh N is running. Written against MAVSDK-Python docs; NOT run by the author
-(no PX4 in the authoring environment) - expect to tweak ports/params for your PX4 version.
+
 
 Output: px4_results/<scenario>/drone<i>.csv, actions.json
 """
