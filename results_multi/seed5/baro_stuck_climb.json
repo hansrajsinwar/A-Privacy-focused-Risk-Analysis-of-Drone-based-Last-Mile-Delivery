@@ -1,0 +1,33 @@
+{
+ "scenario": "baro_stuck_climb",
+ "description": "Barometer freezes during climb-out (t=4 s). GPS height should save the day.",
+ "seed": 5,
+ "sim_time_s": 50.2,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.8,
+   "max_est_error_m": 3.31,
+   "max_est_error_logged_m": 3.31,
+   "landing_error_m": 1.03,
+   "fault_start_s": 4,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 83.8
+  }
+ },
+ "outcome": "PASS",
+ "max_est_error_m": 3.31,
+ "landing_error_m": 1.03,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mission completed, landed at home"
+}

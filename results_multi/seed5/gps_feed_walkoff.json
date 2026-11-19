@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_feed_walkoff",
+ "description": "False-data feed from feeds/gps_walkoff.csv (smooth walk-off, velocity spoofed too).",
+ "seed": 5,
+ "sim_time_s": 52.3,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "DEGRADED",
+   "reason": "landed 9.5 m from home (believed it was at home)",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.7,
+   "max_est_error_m": 11.03,
+   "max_est_error_logged_m": 11.02,
+   "landing_error_m": 9.45,
+   "fault_start_s": 20,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 83.1
+  }
+ },
+ "outcome": "DEGRADED",
+ "max_est_error_m": 11.03,
+ "landing_error_m": 9.45,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: landed 9.5 m from home (believed it was at home)"
+}

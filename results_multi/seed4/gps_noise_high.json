@@ -1,0 +1,33 @@
+{
+ "scenario": "gps_noise_high",
+ "description": "GPS noise x10 from 25-60 s (jamming-like degradation).",
+ "seed": 4,
+ "sim_time_s": 35.7,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "SAFE_ABORT",
+   "reason": "emergency landing in place (drift 1.4 m), mission not completed",
+   "mission_completed": false,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 41.6,
+   "max_est_error_m": 1.68,
+   "max_est_error_logged_m": 1.67,
+   "landing_error_m": 36.17,
+   "fault_start_s": 25.0,
+   "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 4.8 m",
+   "detection_latency_s": 1.0,
+   "failsafe_triggered": true,
+   "final_soc_true": 88.9
+  }
+ },
+ "outcome": "SAFE_ABORT",
+ "max_est_error_m": 1.68,
+ "landing_error_m": 36.17,
+ "detection_latency_s": 1.0,
+ "first_failsafe": "GPS spoof detector: position change disagrees with GPS velocity by 4.8 m",
+ "reason": "d0: emergency landing in place (drift 1.4 m), mission not completed"
+}

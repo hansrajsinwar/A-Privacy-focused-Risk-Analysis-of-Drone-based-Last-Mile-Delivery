@@ -1,0 +1,51 @@
+{
+ "scenario": "two_drones_v2v_freeze",
+ "description": "Drone 0's broadcast is replayed (frozen) to drone 1 from 5 s -> yield never triggers.",
+ "seed": 5,
+ "sim_time_s": 13.4,
+ "min_separation_m": 0.12,
+ "drones": {
+  "0": {
+   "outcome": "FAIL",
+   "reason": "mid-air collision",
+   "mission_completed": false,
+   "crashed": true,
+   "collided": true,
+   "final_mode": "MISSION",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 19.4,
+   "max_est_error_m": 13.19,
+   "max_est_error_logged_m": 13.19,
+   "landing_error_m": null,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 96.4
+  },
+  "1": {
+   "outcome": "FAIL",
+   "reason": "mid-air collision",
+   "mission_completed": false,
+   "crashed": true,
+   "collided": true,
+   "final_mode": "MISSION",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 19.5,
+   "max_est_error_m": 12.91,
+   "max_est_error_logged_m": 12.91,
+   "landing_error_m": null,
+   "fault_start_s": 5,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 96.4
+  }
+ },
+ "outcome": "FAIL",
+ "max_est_error_m": 13.19,
+ "landing_error_m": null,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mid-air collision; d1: mid-air collision"
+}

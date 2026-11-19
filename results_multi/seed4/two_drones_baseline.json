@@ -1,0 +1,51 @@
+{
+ "scenario": "two_drones_baseline",
+ "description": "Crossing paths, V2V avoidance working. Drone 1 yields.",
+ "seed": 4,
+ "sim_time_s": 53.5,
+ "min_separation_m": 4.45,
+ "drones": {
+  "0": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 28.9,
+   "max_est_error_m": 0.59,
+   "max_est_error_logged_m": 0.56,
+   "landing_error_m": 1.1,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 89.5
+  },
+  "1": {
+   "outcome": "PASS",
+   "reason": "mission completed, landed at home",
+   "mission_completed": true,
+   "crashed": false,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 29.1,
+   "max_est_error_m": 0.5,
+   "max_est_error_logged_m": 0.49,
+   "landing_error_m": 0.96,
+   "fault_start_s": null,
+   "first_failsafe": null,
+   "detection_latency_s": null,
+   "failsafe_triggered": false,
+   "final_soc_true": 83.6
+  }
+ },
+ "outcome": "PASS",
+ "max_est_error_m": 0.59,
+ "landing_error_m": 1.1,
+ "detection_latency_s": null,
+ "first_failsafe": null,
+ "reason": "d0: mission completed, landed at home; d1: mission completed, landed at home"
+}

@@ -1,0 +1,33 @@
+{
+ "scenario": "imu_bias_then_gps_loss",
+ "description": "Accelerometer bias 0.5 m/s2 from 20 s, then GPS lost at 25 s -> dead reckoning is poisoned.",
+ "seed": 4,
+ "sim_time_s": 35.6,
+ "min_separation_m": null,
+ "drones": {
+  "0": {
+   "outcome": "FAIL",
+   "reason": "hard impact at 7.4 m/s",
+   "mission_completed": false,
+   "crashed": true,
+   "collided": false,
+   "final_mode": "LANDED",
+   "geofence_breach_true": false,
+   "max_dist_from_home_m": 39.8,
+   "max_est_error_m": 47.81,
+   "max_est_error_logged_m": 47.81,
+   "landing_error_m": null,
+   "fault_start_s": 20,
+   "first_failsafe": "GPS data lost for 1.0s",
+   "detection_latency_s": 5.82,
+   "failsafe_triggered": true,
+   "final_soc_true": 88.6
+  }
+ },
+ "outcome": "FAIL",
+ "max_est_error_m": 47.81,
+ "landing_error_m": null,
+ "detection_latency_s": 5.82,
+ "first_failsafe": "GPS data lost for 1.0s",
+ "reason": "d0: hard impact at 7.4 m/s"
+}
