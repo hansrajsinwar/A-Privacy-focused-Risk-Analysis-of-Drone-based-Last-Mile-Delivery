@@ -1,23 +1,5 @@
 #!/usr/bin/env python3
-"""
-px4_gps_spoofer.py - EXPERIMENTAL false-GPS feed for PX4 SITL (sends MAVLink GPS_INPUT).
 
-Open-loop "ghost track": the position PX4 is told is  anchor + feed(t)  regardless of where the
-vehicle really is. Feed CSV columns: t,north,east,down  (metres, t = seconds since spoofing began).
-
-  feeds/px4_ghost_freeze.csv  -> vehicle believes it is hovering still while it really flies on
-  feeds/px4_ghost_walk.csv    -> vehicle believes it is walking north at 0.5 m/s
-
-To make PX4 use ONLY this GPS, silence the simulated one first (px4_run_scenario.py does this in the
-`gps_spoof_*` scenarios: failure inject SENSOR_GPS OFF, then this script).
-
-Not run by the author - verify in PX4 with `listener sensor_gps` (needs the pxh shell, i.e. start
-px4 without -d) or watch the EKF/position in QGroundControl. PX4 accepts GPS_INPUT in recent versions;
-if yours ignores it, use the failure-injection scenarios instead.
-
-  python px4_gps_spoofer.py --feed feeds/px4_ghost_walk.csv --instance 0 \
-        --anchor-lat 47.397742 --anchor-lon 8.545594 --anchor-alt 488.0
-"""
 import argparse
 import math
 import time
