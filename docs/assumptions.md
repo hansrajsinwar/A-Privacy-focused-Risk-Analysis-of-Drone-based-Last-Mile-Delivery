@@ -14,7 +14,7 @@ This file lists what the model assumes. Every result in the report is a result *
 
 ## Autopilot
 - Programmed state machine: takeoff, waypoints, return-to-launch, land, geofence, battery and GPS-lost failsafes,
-  a GPS-spoof detector (position change versus GPS velocity) and V2V yielding. Thresholds are in `Params`.
+  a GPS-spoof detector (position change versus GPS velocity) and V2V yielding.
 - It is not a commercial autopilot; behaviour of a real airframe may differ.
 
 ## Scenarios
