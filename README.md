@@ -16,7 +16,7 @@ battery, command-link or drone-to-drone (V2V) data is wrong or spoofed.
 | Runs | anywhere with Python, ~1 s per scenario | WSL2/Ubuntu 22.04, Gazebo Harmonic |
 | Autopilot | a simple hand-written one (editable) | the real PX4 flight stack |
 | False data | any sensor, any shape, via CSV feeds | PX4 failure injection + GPS_INPUT spoofer |
-| Status | **tested and reproducible**: 20 unit tests, 25 scenarios x 5 seeds | **baseline and 3 GPS fault runs recorded (one run each)**; other fault runs pending |
+| Status | **tested and reproducible**: 20 unit tests, 25 scenarios x 5 seeds | **baseline and 3 GPS fault runs recorded (one run each)** |
 
 ## Quick start: every command from a clean computer
 
