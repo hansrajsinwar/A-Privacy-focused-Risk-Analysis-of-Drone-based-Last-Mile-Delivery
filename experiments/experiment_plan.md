@@ -152,9 +152,3 @@ depend on the campus layout and mission; the map scale is unvalidated.
 - [ ] `python run_multi.py --runs 5 --seed 1` gives PASS 7, SAFE_ABORT 6, DEGRADED 5, FAIL 5, HUNG 2 and identical `runs.csv`
 - [ ] `python remote_id.py` gives the table in E2 and identical `runs.csv`
 - Reference environment: Python 3.13, numpy 2.5.x, scipy 1.18.1, matplotlib 3.11.2 (recorded in each `manifest.json`).
-
-## Open items
-
-- Agree the research focus with the supervisor: both studies are now in the repository.
-- Re-run `baro_off`, `accel_stuck`, `gyro_off` and run `gps_spoof_walk` with the patched script (E4); repeat the GPS runs if repeats are wanted; validate or label the campus map.
-- Literature-review corrections from the 18 November feedback (done in the dissertation text, not in this repository).
