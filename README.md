@@ -1,7 +1,5 @@
 # A Privacy-focused Risk Analysis of Drone-based Last-Mile Delivery - simulation
-
-Simulation part of the MSc project *A Privacy-focused Risk Analysis of Drone-based Last-Mile Delivery*
-(University of Kent, COMP7300). It tests how a delivery drone's control logic behaves when sensor, navigation,
+It tests how a delivery drone's control logic behaves when sensor, navigation,
 battery, command-link or drone-to-drone (V2V) data is wrong or spoofed.
 
 > **Scope.** Two studies share one simulator. **(1) Fault study** (`run_multi.py`, 25 scenarios): how a drone's control
