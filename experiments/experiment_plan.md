@@ -1,8 +1,5 @@
 # Experiment plan and record
 
-Project: *A Privacy-focused Risk Analysis of Drone-based Last-Mile Delivery* (MSc, University of Kent, COMP7300)
-Author: Hansraj Sinwar. Supervisor: Darren Hurley-Smith. Record date: 19 November 2026.
-
 This file lists every experiment in the repository: what question it answers, the exact settings, the command that
 runs it, where the results are, and what has and has not been done. All results are from simulation and describe the
 models in this repository only (see `docs/assumptions.md`).
