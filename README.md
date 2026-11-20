@@ -9,13 +9,121 @@ battery, command-link or drone-to-drone (V2V) data is wrong or spoofed.
 > broadcasts of delivery flights reveal customer addresses to a passive observer, and what simple mitigations cost.
 > Results describe this simplified model only, not a particular airframe, commercial autopilot, Remote ID receiver or
 > real delivery service.
+>
+> **Every experiment** (question, settings, command, results, status, limits) is listed in
+> [`experiments/experiment_plan.md`](experiments/experiment_plan.md).
 
 | | **A. Python simulator** (`sim.py`) | **B. PX4 SITL + Gazebo** (`px4_*`) |
 |---|---|---|
 | Runs | anywhere with Python, ~1 s per scenario | WSL2/Ubuntu 22.04, Gazebo Harmonic |
 | Autopilot | a simple hand-written one (editable) | the real PX4 flight stack |
 | False data | any sensor, any shape, via CSV feeds | PX4 failure injection + GPS_INPUT spoofer |
-| Status | **tested and reproducible**: 20 unit tests, 25 scenarios x 5 seeds | **set up; baseline flight recorded. Fault runs: implemented, not yet run** |
+| Status | **tested and reproducible**: 20 unit tests, 25 scenarios x 5 seeds | **baseline and 3 GPS fault runs recorded (one run each)**; other fault runs pending |
+
+## Quick start: every command from a clean computer
+
+Follow part 1 to get the main results (works on Windows, macOS or Linux). Part 2 (PX4) is optional and needs Ubuntu 22.04.
+
+### Part 1. Python simulator and Remote ID study (about 5 minutes)
+
+**1. Get the code**
+```bash
+git clone https://github.com/hansrajsinwar/A-Privacy-focused-Risk-Analysis-of-Drone-based-Last-Mile-Delivery.git simulator
+cd simulator
+```
+
+**2. Check Python (3.10 or newer) and create an environment**
+```bash
+python3 --version                                        # must show 3.10 or higher
+python3 -m venv .venv-sim
+source .venv-sim/bin/activate                            # Windows: .venv-sim\Scripts\activate
+pip install -r requirements.txt
+```
+On Ubuntu, if `python3 -m venv` fails: `sudo apt install -y python3-venv`.
+
+**3. Check everything works**
+```bash
+python make_feeds.py            # creates the false-data files in feeds/
+python -m pytest -q             # expect: 20 passed
+```
+
+**4. Run the fault study (25 scenarios x 5 seeds, about 30 s)**
+```bash
+python run_multi.py --runs 5 --seed 1
+```
+Look at: `results_multi/stats.md` (table), `results_multi/outcomes.png` and `errors_ci.png` (charts), `results_multi/runs.csv` (every run).
+
+**5. Run one scenario with full logs and plots (optional)**
+```bash
+python run_all.py --list                   # show all scenario names
+python run_all.py --only baseline gps_drift_consistent
+```
+Look at: `results/<scenario>/plot.png`, `events.csv`, `metrics.json`.
+
+**6. Run the Remote ID study (about 90 s)**
+```bash
+python remote_id.py
+python -m pytest -q test_remote_id.py      # expect: 5 passed
+```
+Look at: `results_remote_id/stats.md`, `remote_id_summary.png`, `remote_id_map.png`.
+
+**Expected results to compare with:** fault study outcomes PASS 7, SAFE_ABORT 6, DEGRADED 5, FAIL 5, HUNG 2 scenarios, and `runs.csv`
+identical to the one in the repository. Remote ID: 100 % of flights within 30 m with no mitigation, 53.3 % with `noise_100`, 40.0 % with `grid_100`.
+
+### Part 2. PX4 + Gazebo (optional, about 1 to 2 hours the first time)
+
+Needs Windows with WSL2 and **Ubuntu 22.04** (other Ubuntu releases are not supported by PX4). Open the Ubuntu terminal.
+
+**1. One-time setup** (installs PX4, Gazebo Harmonic and the Python packages; long)
+```bash
+cd ~/simulator
+sudo apt update && sudo apt install -y python3-venv poppler-utils
+chmod +x px4_setup.sh px4_launch_sims.sh run_px4_checks.sh
+./px4_setup.sh                                  # run it with NO virtual environment active (otherwise the build fails)
+source .venv/bin/activate                       # px4_setup.sh already created .venv
+pip install "mavsdk<4"                          # version 4 and newer breaks the failure-injection code
+python make_feeds.py
+python3 patch_px4.py px4_run_scenario.py        # applies the fixes; keeps a .bak copy
+```
+
+**2. Build the campus world** (from the OpenStreetMap map; once)
+```bash
+pip install opencv-python-headless pillow
+cd campus && python make_campus_world.py && cd ..
+```
+
+**3. Run one scenario (two terminal windows)**
+
+Window 1 (do NOT activate `.venv`): start Gazebo with two drones and leave it running.
+```bash
+cd ~/simulator
+export PX4_GZ_WORLD=kent_campus
+./px4_launch_sims.sh 2
+```
+Window 2: run the scenario and analyse it.
+```bash
+cd ~/simulator && source .venv/bin/activate
+python px4_run_scenario.py --list                                   # all PX4 scenario names
+python px4_run_scenario.py baseline --layout campus
+python px4_analyze.py px4_results/baseline
+```
+Restart window 1 (Ctrl+C, then start again) before every new scenario. Stop with Ctrl+C, never Ctrl+Z.
+Look at: `px4_results/<scenario>/plot.png`, `drone0.csv`, `drone1.csv`, `actions.json`.
+
+**4. Fault scenarios (GPS faults on drone 0), same two windows**
+```bash
+python px4_run_scenario.py gps_off   --layout campus --fault-drone 0
+python px4_run_scenario.py gps_wrong --layout campus --fault-drone 0
+python px4_run_scenario.py gps_stuck --layout campus --fault-drone 0
+python px4_run_scenario.py baro_off  --layout campus --fault-drone 0     # not yet run
+python px4_analyze.py px4_results/gps_off
+```
+Or run several unattended (about 20 minutes): `bash run_px4_checks.sh`.
+Each run takes up to 7 minutes (420 s limit). Results appear in `px4_results/<scenario>/`.
+
+**5. Copy results to Windows:** open `\\wsl$\Ubuntu-22.04\home\<your-user>\simulator` in File Explorer.
+
+If a step fails, see the Troubleshooting table at the end.
 
 ## Reproduce the reported results (Python simulator)
 
@@ -136,9 +244,21 @@ It shows *how this model's logic behaves*, not how a specific airframe or autopi
 
 > **Files.** The `px4_*` scripts are NOT included in this folder: keep the ones already in your repository (yours include the campus layout). Apply the fixes below with `python3 patch_px4.py px4_run_scenario.py` (keeps a `.bak` copy), and run several scenarios unattended with `bash run_px4_checks.sh`.
 
-**Status.** Set up and the baseline flight has been recorded with real PX4 data in `results/px4_results/baseline/` (2 drones, campus world, 30 m altitude: max distance from home 368 m and 447 m, both returned to within 1.4 m, minimum separation 13.0 m). The fault scenarios below are
-*implemented but not yet run*; the batch/summary scripts were only checked with synthetic data. No PX4 fault
-outcome should be reported until logs exist in `px4_results/`. PX4 only accepts some failure types per sensor
+**Status.** Real PX4 runs exist in `px4_results/` for the baseline and three GPS faults (one run each, two drones, campus world,
+30 m altitude, fault in drone 0 at about 25 s, 420 s limit):
+
+| PX4 scenario | What happened to drone 0 | Landed / final position | Min separation | Closest Python scenario |
+|---|---|---|---|---|
+| `baseline` | Normal mission, return to home, hold | 0.0 m from home | 13.1 m | baseline |
+| `gps_off` | Fix became NO_GPS; mode changed 4.8 s after the fault; descended and landed | about 78.6 m from home | 258.8 m | `gps_dropout_long` |
+| `gps_wrong` | Fix became FIX_2D; same reaction after 4.9 s; landed | about 78.5 m from home | 259.8 m | `gps_dropout_long` |
+| `gps_stuck` | Fix stayed 3D, no failsafe; kept flying to the time limit | 57.1 m from home, still airborne | 47.5 m | `gps_freeze` |
+
+PX4 detected a lost or degraded GPS fix within about 5 s and landed, but did not detect a frozen position, which is the same
+pattern as the Python study. Landing distances differ between PX4 and Python, so compare behaviour, not numbers.
+One run per scenario: no confidence intervals. `baro_wrong`, `accel_stuck` and `gyro_off` were incomplete (run before the patch)
+and are not reported; `baro_off`, `accel_stuck`, `gyro_off` and `gps_spoof_walk` still need to be run with the patched script.
+Details: `experiments/experiment_plan.md` (E3, E4). PX4 only accepts some failure types per sensor
 (baro/accel/gyro/mag: off or stuck; GPS: off, stuck or wrong-fix-type; motor/battery: off or wrong), so the
 scenario list differs from the Python one. Motor failure is a PX4 scenario only.
 
@@ -148,8 +268,8 @@ scenario list differs from the Python one. Motor failure is a PX4 scenario only.
 . .venv/bin/activate && python make_feeds.py
 ./px4_launch_sims.sh 2              # terminal 1: Gazebo + 2 drones (leave running)
 python px4_run_scenario.py --list   # terminal 2
-python px4_run_scenario.py baseline --layout two
-python px4_run_scenario.py gps_off --layout two --fault-drone 0
+python px4_run_scenario.py baseline --layout campus
+python px4_run_scenario.py gps_off --layout campus --fault-drone 0
 python px4_analyze.py px4_results/gps_off [--ulog path/to/log.ulg]
 ```
 
@@ -227,6 +347,7 @@ sim.py  scenarios.py  run_all.py  run_multi.py  make_outcome_chart.py  make_ci_c
 remote_id.py  test_remote_id.py     Remote ID study (results_remote_id/)
 patch_px4.py  run_px4_checks.sh     PX4 helpers (your own px4_*.py / px4_*.sh stay as they are)
 feeds/   false-data CSVs          results/   one-run output          results_multi/   5-seed records and statistics
+experiments/experiment_plan.md      record of every experiment        px4_results/   real PX4 runs        docs/assumptions.md   model assumptions
 ```
 
 ## Environment used (PX4 part)
@@ -239,7 +360,7 @@ feeds/   false-data CSVs          results/   one-run output          results_mul
 | 3D simulator | Gazebo Harmonic |
 | Python | virtual environment `.venv`, `mavsdk<4` (version 4 and newer breaks `mavsdk.failure`) |
 | Drones | x500 quadcopters; instance *i* uses MAVSDK UDP port 14540+*i*, spoofer port 14580+*i* |
-| Windows access to results | `\\wsl$\Ubuntu-22.04\home\hans\drone_repo` |
+| Windows access to results | `\\wsl$\Ubuntu-22.04\home\hans\simulator` |
 
 Every time: window 1 (no `.venv`) `export PX4_GZ_WORLD=kent_campus; ./px4_launch_sims.sh 2`; window 2 (with `.venv`)
 `python px4_run_scenario.py <scenario>`. Restart window 1 between scenarios. Stop with Ctrl+C, never Ctrl+Z.
