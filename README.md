@@ -18,11 +18,11 @@ battery, command-link or drone-to-drone (V2V) data is wrong or spoofed.
 | False data | any sensor, any shape, via CSV feeds | PX4 failure injection + GPS_INPUT spoofer |
 | Status | **tested and reproducible**: 20 unit tests, 25 scenarios x 5 seeds | **baseline and 3 GPS fault runs recorded (one run each)** |
 
-## Quick start: every command from a clean computer
+## Quick start
 
-Follow part 1 to get the main results (works on Windows, macOS or Linux). Part 2 (PX4) is optional and needs Ubuntu 22.04.
+Follow part 1 to get the main results (works on Windows, macOS or Linux). Part 2 (PX4) needs Ubuntu 22.04.
 
-### Part 1. Python simulator and Remote ID study (about 5 minutes)
+### Part 1. Python simulator and Remote ID study
 
 **1. Get the code**
 ```bash
@@ -42,23 +42,23 @@ On Ubuntu, if `python3 -m venv` fails: `sudo apt install -y python3-venv`.
 **3. Check everything works**
 ```bash
 python make_feeds.py            # creates the false-data files in feeds/
-python -m pytest -q             # expect: 20 passed
+python -m pytest -q            
 ```
 
-**4. Run the fault study (25 scenarios x 5 seeds, about 30 s)**
+**4. Run the fault study (25 scenarios x 5 seeds)**
 ```bash
 python run_multi.py --runs 5 --seed 1
 ```
 Look at: `results_multi/stats.md` (table), `results_multi/outcomes.png` and `errors_ci.png` (charts), `results_multi/runs.csv` (every run).
 
-**5. Run one scenario with full logs and plots (optional)**
+**5. Run one scenario with full logs and plots**
 ```bash
 python run_all.py --list                   # show all scenario names
 python run_all.py --only baseline gps_drift_consistent
 ```
 Look at: `results/<scenario>/plot.png`, `events.csv`, `metrics.json`.
 
-**6. Run the Remote ID study (about 90 s)**
+**6. Run the Remote ID study**
 ```bash
 python remote_id.py
 python -m pytest -q test_remote_id.py      # expect: 5 passed
@@ -68,11 +68,11 @@ Look at: `results_remote_id/stats.md`, `remote_id_summary.png`, `remote_id_map.p
 **Expected results to compare with:** fault study outcomes PASS 7, SAFE_ABORT 6, DEGRADED 5, FAIL 5, HUNG 2 scenarios, and `runs.csv`
 identical to the one in the repository. Remote ID: 100 % of flights within 30 m with no mitigation, 53.3 % with `noise_100`, 40.0 % with `grid_100`.
 
-### Part 2. PX4 + Gazebo (optional, about 1 to 2 hours the first time)
+### Part 2. PX4 + Gazebo
 
 Needs Windows with WSL2 and **Ubuntu 22.04** (other Ubuntu releases are not supported by PX4). Open the Ubuntu terminal.
 
-**1. One-time setup** (installs PX4, Gazebo Harmonic and the Python packages; long)
+**1. One-time setup** (installs PX4, Gazebo Harmonic and the Python packages)
 ```bash
 cd ~/simulator
 sudo apt update && sudo apt install -y python3-venv poppler-utils
@@ -84,7 +84,7 @@ python make_feeds.py
 python3 patch_px4.py px4_run_scenario.py        # applies the fixes; keeps a .bak copy
 ```
 
-**2. Build the campus world** (from the OpenStreetMap map; once)
+**2. Build the campus world** (from the OpenStreetMap map; we only need to do once)
 ```bash
 pip install opencv-python-headless pillow
 cd campus && python make_campus_world.py && cd ..
@@ -113,10 +113,10 @@ Look at: `px4_results/<scenario>/plot.png`, `drone0.csv`, `drone1.csv`, `actions
 python px4_run_scenario.py gps_off   --layout campus --fault-drone 0
 python px4_run_scenario.py gps_wrong --layout campus --fault-drone 0
 python px4_run_scenario.py gps_stuck --layout campus --fault-drone 0
-python px4_run_scenario.py baro_off  --layout campus --fault-drone 0     # not yet run
+python px4_run_scenario.py baro_off  --layout campus --fault-drone 0     
 python px4_analyze.py px4_results/gps_off
 ```
-Or run several unattended (about 20 minutes): `bash run_px4_checks.sh`.
+Or run several unattended : `bash run_px4_checks.sh`.
 Each run takes up to 7 minutes (420 s limit). Results appear in `px4_results/<scenario>/`.
 
 **5. Copy results to Windows:** open `\\wsl$\Ubuntu-22.04\home\<your-user>\simulator` in File Explorer.
@@ -174,7 +174,7 @@ Drone physics (truth, with lag, drag, wind, gusts, battery, crash detection) -> 
 baro, battery) -> **fault layer** -> Kalman filter with innovation gating -> autopilot (takeoff, waypoints, RTL,
 land, geofence, battery failsafes, GPS-lost failsafe, GPS-spoof detector, V2V yielding). The autopilot only sees
 the *estimate*, so false data makes the true drone behave differently from what the autopilot believes - that gap is the
-thing you are measuring (`est_err` in the logs).
+thing we are measuring (`est_err` in the logs).
 
 ### Fault types
 
@@ -196,7 +196,7 @@ thing you are measuring (`est_err` in the logs).
 
 All faults take `t_start`, optional `t_end`, and `drone`.
 
-### Add your own scenario
+### Add our own scenario
 
 In `scenarios.py` append to `_LIST`:
 
@@ -213,12 +213,12 @@ or a JSON file (`python run_all.py --custom my_case.json`):
             {"type": "gps_dropout", "t_start": 30, "t_end": 50}]}
 ```
 
-### Your own false-data feed
+### Our own false-data feed
 
 Make a CSV `t,dx,dy,dz` (seconds since fault start, metre offsets), save in `feeds/`, and use
 `Fault("gps_feed", 20, params={"file": "mine.csv", "spoof_velocity": True})`. Edit `make_feeds.py` to generate shapes in code.
 
-### Testing your own failsafe logic
+### Testing our own failsafe logic
 
 Thresholds live in `Params` (`sim.py`): GPS reject/timeout times, spoof-detector window/threshold, battery limits,
 avoidance distances. The logic itself is `Autopilot` - change it, re-run `python run_all.py`, compare `results/summary.md`.
@@ -230,7 +230,7 @@ Outcomes: `PASS` (mission done, landed at home) - `SAFE_ABORT` (landed safely, m
 - Short GPS loss is tolerated; long GPS loss lands in place within ~1 s of detection.
 - Step jumps and noisy/frozen GPS are caught by the innovation gate or the spoof detector.
 - A slow walk-off is caught only if velocity is *not* spoofed; a **consistent** spoof (position + velocity) passes every check,
-  and the drone lands ~14 m away believing it is home. Good place to add your own detection (e.g. IMU-vs-GPS velocity check).
+  and the drone lands ~14 m away believing it is home.
 - False battery data causes either a needless landing or a crash. In the single crossing geometry tested, disabled, dropped or frozen neighbour data each ended in a collision in 4 of 5 seeds; this does not show the three have equivalent effects elsewhere. A fake neighbour makes the drone hover until the simulation ends (HUNG).
 - Command latency of 1 s makes the control loop unstable (drone never completes).
 
@@ -240,7 +240,6 @@ It shows *how this model's logic behaves*, not how a specific airframe or autopi
 
 ## B. PX4 SITL + Gazebo
 
-> **Files.** The `px4_*` scripts are NOT included in this folder: keep the ones already in your repository (yours include the campus layout). Apply the fixes below with `python3 patch_px4.py px4_run_scenario.py` (keeps a `.bak` copy), and run several scenarios unattended with `bash run_px4_checks.sh`.
 
 **Status.** Real PX4 runs exist in `px4_results/` for the baseline and three GPS faults (one run each, two drones, campus world,
 30 m altitude, fault in drone 0 at about 25 s, 420 s limit):
@@ -255,7 +254,7 @@ It shows *how this model's logic behaves*, not how a specific airframe or autopi
 PX4 detected a lost or degraded GPS fix within about 5 s and landed, but did not detect a frozen position, which is the same
 pattern as the Python study. Landing distances differ between PX4 and Python, so compare behaviour, not numbers.
 One run per scenario: no confidence intervals. `baro_wrong`, `accel_stuck` and `gyro_off` were incomplete (run before the patch)
-and are not reported; `baro_off`, `accel_stuck`, `gyro_off` and `gps_spoof_walk` still need to be run with the patched script.
+and are not reported; `baro_off`, `accel_stuck`, `gyro_off` and `gps_spoof_walk` still need to be run.
 Details: `experiments/experiment_plan.md` (E3, E4). PX4 only accepts some failure types per sensor
 (baro/accel/gyro/mag: off or stuck; GPS: off, stuck or wrong-fix-type; motor/battery: off or wrong), so the
 scenario list differs from the Python one. Motor failure is a PX4 scenario only.
@@ -297,7 +296,7 @@ cd campus && python make_campus_world.py && cd ..
 
 | Setting | Value used | Note |
 |---|---|---|
-| Map width (`--width-m`) | 1170 m | **Estimate.** Replace with the real width from the OpenStreetMap Share > Image corner coordinates |
+| Map width (`--width-m`) | 1170 m | |
 | Building height (`--height`) | 14 m | A guess; the map has no heights |
 | Position (`--lat`, `--lon`) | 51.2975, 1.0690 | Approximate campus position |
 | Flight height, speed | 30 m, 8 m/s | `--alt`, `--speed` |
